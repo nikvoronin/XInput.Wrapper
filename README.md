@@ -16,7 +16,7 @@ X.Gamepad gamepad = null;
 ```
 
 
-Test of availability of XInput (xinput1_4.dll). Should not call often! This method not cached.
+Test of availability of XInput 1.4 (xinput1_4.dll). Should not call often! This method not cached.
 
 ```c#
 if (X.IsAvailable)
@@ -27,7 +27,6 @@ if (X.IsAvailable)
 
 Got Gamepad of the first user
 
-
 ```c#
 if (X.IsAvailable)
 {
@@ -35,7 +34,6 @@ if (X.IsAvailable)
 	...
 ```
 
-Totally available of four controllers: X.Gamepad_1 ... X.Gamepad_4.
 
 Check gamepad's capabilites and test ForceFeedBack support
 
@@ -110,9 +108,9 @@ If you are playing with an event driven application (such as WinForms, WPF, etc)
 ```c#
 while (true)
 {
-  ProcessInput();
-  Update();
-  Render();
+	ProcessInput();
+	Update();
+	Render();
 }
 
 ...
@@ -144,7 +142,7 @@ if (gamepad.Update())
 	if (gamepad.X_up)
 		gamepad.FFB_Stop();
 
-	// You can process here but here this will called once
+	// You can process here but this will called once
 	if (gamepad.A_down)
 		gamepad.FFB_Vibrate(1, .5f, 100);
 
@@ -165,5 +163,69 @@ if (gamepad.Buttons != 0)
 
 ## Processing of analog inputs
 
+There are two kinds of analog methods: absolute and normalized. Normalized are with the _N postfix. Absolute methods returns X.Point {int X, int Y} objects, normalized returns X.PointF {float X, float Y}.
+
+```
+     0    <= LTrigger.X   <=   255		// absolute
+     0.0f <= LTrigger_N.X <=     1.0f	// normalized
+
+-32767    <=   LStick.X   <= 32767		// ansolute
+     0.0f <=   LStick_N.X <=     1.0f	// normalized
+
+```
+
+
+### Dead zones
+
+To adjust dead zones sensitivity
+
+```c#
+int LStick_DeadZone    = 7849;
+int RStick_DeadZone    = 8689;
+int LTrigger_Threshold = 30;
+int RTrigger_Threshold = 30;
+```
+
+_N methods return 0.0f when axis in a dead zone.
+
 
 ## Force feedback
+
+Check presence of FFB
+
+```c#
+X.Gamepad.Capability caps = gamepad.Capabilities;
+
+if ((caps.Flags & X.Gamepad.CapabilityFlags.FFB_Supported) == X.Gamepad.CapabilityFlags.FFB_Supported)
+{
+	// Already here
+}
+```
+
+
+Stop vabrations
+
+```c#
+gamepad.FFB_Stop();
+```
+
+
+And starts again at left and right with strength lying beetwen 0.0f and 1.0f up to 100ms
+
+```c#
+gamepad.FFB_Vibrate(0.5f, 1.0f, 100);
+```
+
+
+Left motor only (low-frequency motor)
+
+```c#
+gamepad.FFB_LeftMotor(0.5f, 100);
+```
+
+
+Right side only (hi-frequency motor)
+
+```c#
+gamepad.FFB_RightMotor(0.5f, 100);
+```
