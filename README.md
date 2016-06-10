@@ -84,18 +84,49 @@ private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
 ```
 
 
-## Update controller state 
+## Events
 
-If you are playing with an event driven application (such as WinForms, WPF, etc) you can use X.Start|StopPolling. Application with custom main loop should use X.Gamepad.Update() method.
+### ConnectionChanged
+
+Occurs when state of connection is changed: controller connects or disconnects. Use X.GamePad.IsConnected() to retrieve state of connection.
+
+
+### StateChanged
+
+Occurs when controller sends new data packet for application. Something changed and you should do something with new data. You can spot that some of buttons were pressed (up or down), thumb was rotated or trigger was pressed. 
+
+
+### KeyDown
+
+When button pressed for a long time your app can regularly receive messages about this.
+
+StateChanged event called once when button pressed. Use KeyDown event handler if you want to receive regularly messages about this.
+
+
+## Update gamepad state 
+
+If you are playing with an event driven application (such as WinForms, WPF, etc) you can use X.Start|StopPolling. Apps with custom main loop should call X.Gamepad.Update() method.
 
 ```c#
-if (gamepad == null)
-	return;
-
-if (gamepad.Update())
+while (true)
 {
-	// something happened: button pressed, stick turned or trigger was triggered
+  ProcessInput();
+  Update();
+  Render();
 }
+
+...
+
+void ProcessInput()
+{
+	if (gamepad == null)
+		return;
+
+	if (gamepad.Update())
+	{
+		// something happened: button pressed, stick turned or trigger was triggered
+	}
+	...
 ```
 
 
@@ -113,7 +144,26 @@ if (gamepad.Update())
 	if (gamepad.X_up)
 		gamepad.FFB_Stop();
 
-	// Proceed analogue inputs
+	// You can process here but here this will called once
+	if (gamepad.A_down)
+		gamepad.FFB_Vibrate(1, .5f, 100);
+
+	// Processing of analog inputs
+	...
+}
+
+// Will called again and again and again while button is pressed
+if (gamepad.Buttons != 0)
+{
+	if (gamepad.X_down)
+		gamepad.FFB_Vibrate(.2f, .5f, 100);
+	
 	...
 }
 ```
+
+
+## Processing of analog inputs
+
+
+## Force feedback
