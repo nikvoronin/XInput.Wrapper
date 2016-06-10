@@ -35,7 +35,7 @@ if (X.IsAvailable)
 	...
 ```
 
-Totaly available four devices: from X.Gamepad_1 to X.Gamepad_4.
+Totally available of four controllers: X.Gamepad_1 ... X.Gamepad_4.
 
 Check gamepad's capabilites and test ForceFeedBack support
 
@@ -54,7 +54,7 @@ if (X.IsAvailable)
 ```
 
 
-You can subscribe on events then start polling thread. X.StartPolling supports up to four devices.
+You can subscribe on events then start polling thread. X.StartPolling() supports up to four controllers.
 
 ```c#
 if (X.IsAvailable)
@@ -84,9 +84,9 @@ private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
 ```
 
 
-## Updating state of gamepad
+## Update controller state 
 
-If you are playing with event driven application (such as WinForms, WPF, etc) you can use X.Start|StopPolling. Application with custom main loop should use X.Gamepad.Update() method.
+If you are playing with an event driven application (such as WinForms, WPF, etc) you can use X.Start|StopPolling. Application with custom main loop should use X.Gamepad.Update() method.
 
 ```c#
 if (gamepad == null)
