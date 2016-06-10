@@ -169,8 +169,8 @@ There are two kinds of analog methods: absolute and normalized. Normalized are w
      0    <= LTrigger.X   <=   255		// absolute
      0.0f <= LTrigger_N.X <=     1.0f	// normalized
 
--32767    <=   LStick.X   <= 32767		// ansolute
-     0.0f <=   LStick_N.X <=     1.0f	// normalized
+-32767    <= LStick.X     <= 32767		// absolute
+    -1.0f <= LStick_N.X   <=     1.0f	// normalized
 
 ```
 
