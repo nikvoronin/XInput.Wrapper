@@ -1,6 +1,6 @@
-﻿// Gamepad.XInput wrapper by Nikolai Voronin
+﻿// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.3 (June 08, 2016)
+// Version 0.3.1 (June 16, 2016)
 
 using System;
 using System.Collections.Generic;
@@ -175,11 +175,11 @@ namespace XInput.Wrapper
             public bool Start_down { get { return state.Gamepad.IsButtonDown(GamepadButtons.Start); }}
             public bool Start_up { get { return state.Gamepad.IsButtonUp(buttons, GamepadButtons.Start); }}
 
-            public bool LShoulder_down { get { return state.Gamepad.IsButtonDown(GamepadButtons.LShoulder); }}
-            public bool LShoulder_up { get { return state.Gamepad.IsButtonUp(buttons, GamepadButtons.LShoulder); }}
+            public bool LBumper_down { get { return state.Gamepad.IsButtonDown(GamepadButtons.LBumper); }}
+            public bool LBumper_up { get { return state.Gamepad.IsButtonUp(buttons, GamepadButtons.LBumper); }}
 
-            public bool RShoulder_down { get { return state.Gamepad.IsButtonDown(GamepadButtons.RShoulder); }}
-            public bool RShoulder_up { get { return state.Gamepad.IsButtonUp(buttons, GamepadButtons.RShoulder); }}
+            public bool RBumper_down { get { return state.Gamepad.IsButtonDown(GamepadButtons.RBumper); }}
+            public bool RBumper_up { get { return state.Gamepad.IsButtonUp(buttons, GamepadButtons.RBumper); }}
 
             public bool LStick_down { get { return state.Gamepad.IsButtonDown(GamepadButtons.LeftStick); }}
             public bool LStick_up { get { return state.Gamepad.IsButtonUp(buttons, GamepadButtons.LeftStick); }}
@@ -779,8 +779,8 @@ namespace XInput.Wrapper
                 Back = 0x0020,
                 LeftStick = 0x0040,
                 RightStick = 0x0080,
-                LShoulder = 0x0100,
-                RShoulder = 0x0200,
+                LBumper = 0x0100,
+                RBumper = 0x0200,
                 A = 0x1000,
                 B = 0x2000,
                 X = 0x4000,
