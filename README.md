@@ -43,9 +43,9 @@ if (X.IsAvailable)
 	gamepad = X.Gamepad_1;
 	X.Gamepad.Capability caps = gamepad.Capabilities;
 
-	if ((caps.Flags & X.Gamepad.CapabilityFlags.FFB_Supported) == X.Gamepad.CapabilityFlags.FFB_Supported)
+	if (gamepad.FFB_Supported)
 	{
-		// can play with ~~vibration~~ FFB
+		// can play with ~~vibrations~~ FFB
 	}
 
 	...
@@ -192,6 +192,15 @@ _N methods return 0.0f when axis in a dead zone.
 ## Force feedback
 
 Check presence of FFB
+
+```c#
+if (gamepad.FFB_Supported)
+{
+	// Already here
+}
+```
+
+or
 
 ```c#
 X.Gamepad.Capability caps = gamepad.Capabilities;

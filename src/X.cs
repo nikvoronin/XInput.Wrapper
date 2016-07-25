@@ -1,6 +1,7 @@
 ﻿// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.3.1 (June 16, 2016)
+// Version 0.3.2 (July 25, 2016)
+// Under the MIT License (MIT)
 
 using System;
 using System.Collections.Generic;
@@ -128,6 +129,9 @@ namespace XInput.Wrapper
                 batteryInfo = gamepad;
             }
 
+
+            #region // Capabilities //////////////////////////////////////////////////////////////////////////////////
+
             public Capability Capabilities
             {
                 get
@@ -140,6 +144,22 @@ namespace XInput.Wrapper
                     return capabilities;
                 }
             }
+
+            public bool Wireless
+            {
+                get {
+                    return (Capabilities.Flags & CapabilityFlags.Wireless) == CapabilityFlags.Wireless;
+                }
+            }
+
+            public bool FFB_Supported
+            {
+                get {
+                    return (Capabilities.Flags & CapabilityFlags.FFB_Supported) == CapabilityFlags.FFB_Supported;
+                }
+            }
+
+            #endregion
 
 
             #region // Buttons, sticks, thumbs, etc //////////////////////////////////////////////////////////////////
