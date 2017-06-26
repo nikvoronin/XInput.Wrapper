@@ -24,6 +24,9 @@ if (X.IsAvailable)
 	...
 ```
 
+> For performance reasons, don't call XInputGetState for an 'empty' user slot every frame. We recommend that you space out checks for new controllers every few seconds instead.<br/>
+[MSDN](https://msdn.microsoft.com/en-us/library/windows/desktop/ee417001(v=vs.85).aspx#getting_controller_state)
+
 
 Got Gamepad of the first user
 
