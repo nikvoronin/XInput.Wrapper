@@ -407,8 +407,8 @@ namespace XInput.Wrapper
             public void Vibrate(
                 float leftLoPower   = -1f,
                 float rightHiPower  = -1f,
-                int durationLeft    = -1,
-                int durationRight   = -1)
+                int   durationLeft  = -1,
+                int   durationRight = -1  )
             {
                 if (leftLoPower >= 0)
                     vibra.LLowSpeed = PowerToSpeed(leftLoPower);
