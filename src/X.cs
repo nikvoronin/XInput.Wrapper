@@ -113,8 +113,8 @@ namespace XInput.Wrapper
 
             StatePacket state = new StatePacket();
 
-            ushort lastButtonsState = 0;
-            public ushort Buttons { get { return state.Current.Buttons; } }
+            Button lastButtonsState = 0;
+            public Button Buttons { get { return state.Current.Buttons; } }
 
             int packetNumber = -1;
             public int PacketNumber { get { return state.PacketNumber; } }
@@ -595,7 +595,7 @@ namespace XInput.Wrapper
             {
                 [MarshalAs(UnmanagedType.I2)]
                 [FieldOffset(0)]
-                public ushort Buttons;
+                public Button Buttons;
 
                 [MarshalAs(UnmanagedType.I1)]
                 [FieldOffset(2)]
@@ -623,19 +623,19 @@ namespace XInput.Wrapper
 
                 public bool IsButtonDown(Button buttonMask)
                 {
-                    return (Buttons & (ushort)buttonMask) == (ushort)buttonMask;
+                    return (Buttons & buttonMask) == buttonMask;
                 }
 
-                public bool IsButtonUp(ushort lastButtonsState, Button buttonMask)
+                public bool IsButtonUp(Button lastButtonsState, Button buttonMask)
                 {
                     return
-                        ((lastButtonsState & (ushort)buttonMask) == (ushort)buttonMask) &&
-                        ((Buttons & (ushort)buttonMask) != (ushort)buttonMask);
+                        ((lastButtonsState & buttonMask) == buttonMask) &&
+                        ((Buttons & buttonMask) != buttonMask);
                 }
 
-                public bool IsButtonPresent(Button buttonFlags)
+                public bool IsButtonPresent(Button buttonMask)
                 {
-                    return (Buttons & (int)buttonFlags) == (int)buttonFlags;
+                    return (Buttons & buttonMask) == buttonMask;
                 }
 
                 public void Copy(PadState source)
@@ -651,7 +651,7 @@ namespace XInput.Wrapper
 
                 public override int GetHashCode()
                 {
-                    return LStickX ^ LStickY ^ RStickX ^ RStickY ^ LeftTrigger ^ RightTrigger ^ Buttons;
+                    return LStickX ^ LStickY ^ RStickX ^ RStickY ^ LeftTrigger ^ RightTrigger ^ (ushort)Buttons;
                 }
 
                 public override bool Equals(object obj)
