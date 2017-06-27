@@ -459,11 +459,6 @@ namespace XInput.Wrapper
                 public byte HidCode;
             } // struct Keystroke
 
-            public enum DeviceType : byte
-            {
-                Gamepad = 0x01  // always gamepad
-            }
-
             [StructLayout(LayoutKind.Explicit)]
             public struct PadState
             {
@@ -592,21 +587,6 @@ namespace XInput.Wrapper
                 }
             } // struct VibrationSpeed
 
-            public enum PadType : byte
-            {
-                Unknown         = 0x00,
-                Gamepad         = 0x01,
-                Wheel           = 0x02,
-                ArcadeStick     = 0x03,
-                FlightStick     = 0x04,
-                DancePad        = 0x05,
-                Guitar          = 0x06,
-                GuitarAlternate = 0x07,
-                DrumKit         = 0x08,
-                GuitarBass      = 0x0B,
-                ArcadePad       = 0x13
-            };
-
             [Flags]
             public enum ButtonFlag : ushort
             {
@@ -651,6 +631,8 @@ namespace XInput.Wrapper
                             ref caps) == 0;
                 }
 
+                public SubType PadType { get { return (SubType)caps.SubType; } }
+
                 public bool Wireless { get { return ((Flag)caps.Flags).HasFlag(Flag.Wireless); } }
                 public bool ForceFeedback { get { return ((Flag)caps.Flags).HasFlag(Flag.ForceFeedback); } }
                 public bool VoiceSupport { get { return ((Flag)caps.Flags).HasFlag(Flag.VoiceSupport); } }
@@ -667,6 +649,21 @@ namespace XInput.Wrapper
                     Wireless      = 0x0002,
                     PMD_Supported = 0x0008,   // Device supports plug-in modules.
                     NoNavigation  = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
+                };
+
+                public enum SubType : byte
+                {
+                    Unknown = 0x00,
+                    Gamepad = 0x01,
+                    Wheel = 0x02,
+                    ArcadeStick = 0x03,
+                    FlightStick = 0x04,
+                    DancePad = 0x05,
+                    Guitar = 0x06,
+                    GuitarAlternate = 0x07,
+                    DrumKit = 0x08,
+                    GuitarBass = 0x0B,
+                    ArcadePad = 0x13
                 };
             } // class Capability
 
