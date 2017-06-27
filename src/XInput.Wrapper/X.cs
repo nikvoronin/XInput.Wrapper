@@ -749,21 +749,21 @@ namespace XInput.Wrapper
         internal class Native
         {
             [DllImport("xinput1_4.dll")]
-            public static extern int XInputGetState
+            public static extern uint XInputGetState
             (
                 uint dwUserIndex,
                 ref XINPUT_STATE pState
             );
 
             [DllImport("xinput1_4.dll")]
-            public static extern int XInputSetState
+            public static extern uint XInputSetState
             (
                 uint dwUserIndex,
                 ref XINPUT_VIBRATION pVibration
             );
 
             [DllImport("xinput1_4.dll")]
-            public static extern int XInputGetCapabilities
+            public static extern uint XInputGetCapabilities
             (
                 uint dwUserIndex,
                 uint dwFlags,
@@ -772,7 +772,7 @@ namespace XInput.Wrapper
 
 
             [DllImport("xinput1_4.dll")]
-            public static extern int XInputGetBatteryInformation
+            public static extern uint XInputGetBatteryInformation
             (
                 uint dwUserIndex,
                 byte devType,
@@ -780,7 +780,7 @@ namespace XInput.Wrapper
             );
 
             [DllImport("xinput1_4.dll")]
-            public static extern int XInputGetKeystroke
+            public static extern uint XInputGetKeystroke
             (
                 uint dwUserIndex,
                 uint dwReserved,
@@ -791,6 +791,16 @@ namespace XInput.Wrapper
             public static extern void XInputEnable
             (
                 bool enable
+            );
+
+            [DllImport("xinput1_4.dll)")]
+            public static extern uint XInputGetAudioDeviceIds
+            (
+                uint dwUserIndex,
+                [MarshalAs(UnmanagedType.LPWStr)]out string pRenderDeviceId,
+                ref uint pRenderCount,
+                [MarshalAs(UnmanagedType.LPWStr)]out string pCaptureDeviceId,
+                ref uint pCaptureCount
             );
 
             // ex StatePacket
