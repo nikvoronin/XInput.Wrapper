@@ -476,172 +476,6 @@ namespace XInput.Wrapper
             #endregion
 
 
-            internal class Native
-            {
-                [DllImport("xinput1_4.dll")]
-                public static extern int XInputGetState
-                (
-                    uint dwUserIndex,
-                    ref XINPUT_STATE pState
-                );
-
-                [DllImport("xinput1_4.dll")]
-                public static extern int XInputSetState
-                (
-                    uint dwUserIndex,
-                    ref XINPUT_VIBRATION pVibration
-                );
-
-                [DllImport("xinput1_4.dll")]
-                public static extern int XInputGetCapabilities
-                (
-                    uint dwUserIndex,
-                    uint dwFlags,
-                    ref XINPUT_CAPABILITIES pCapabilities
-                );
-
-
-                [DllImport("xinput1_4.dll")]
-                public static extern int XInputGetBatteryInformation
-                (
-                    uint dwUserIndex,
-                    byte devType,
-                    ref XINPUT_BATTERY_INFORMATION pBatteryInformation
-                );
-
-                [DllImport("xinput1_4.dll")]
-                public static extern int XInputGetKeystroke
-                (
-                    uint dwUserIndex,
-                    uint dwReserved,
-                    ref XINPUT_KEYSTROKE pKeystroke
-                );
-
-                [DllImport("xinput1_4.dll")]
-                public static extern void XInputEnable
-                (
-                    bool enable
-                );
-
-                // ex StatePacket
-                [StructLayout(LayoutKind.Explicit)]
-                public struct XINPUT_STATE
-                {
-                    [FieldOffset(0)]
-                    public uint dwPacketNumber;
-
-                    [FieldOffset(4)]
-                    public XINPUT_GAMEPAD Gamepad;
-                }
-
-                // ex PadState
-                [StructLayout(LayoutKind.Explicit)]
-                public struct XINPUT_GAMEPAD
-                {
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(0)]
-                    public ushort wButtons;
-
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(2)]
-                    public byte bLeftTrigger;
-
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(3)]
-                    public byte bRightTrigger;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(4)]
-                    public short sThumbLX;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(6)]
-                    public short sThumbLY;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(8)]
-                    public short sThumbRX;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(10)]
-                    public short sThumbRY;
-                }
-
-                // ex VibrationSpeed
-                [StructLayout(LayoutKind.Sequential)]
-                public struct XINPUT_VIBRATION
-                {
-                    [MarshalAs(UnmanagedType.I2)]
-                    public ushort wLeftMotorSpeed;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    public ushort wRightMotorSpeed;
-                }
-
-                // ex DeviceCapability
-                [StructLayout(LayoutKind.Explicit)]
-                public struct XINPUT_CAPABILITIES
-                {
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(0)]
-                    public byte Type;
-
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(1)]
-                    public byte SubType;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(2)]
-                    public ushort Flags;
-
-                    [FieldOffset(4)]
-                    public XINPUT_GAMEPAD Gamepad;
-
-                    [FieldOffset(16)]
-                    public XINPUT_VIBRATION Vibration;
-                }
-
-                // ex Battery.State
-                [StructLayout(LayoutKind.Explicit)]
-                public struct XINPUT_BATTERY_INFORMATION
-                {
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(0)]
-                    public byte BatteryType;
-
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(1)]
-                    public byte BatteryLevel;
-                }
-
-                // ex Keystroke
-                [StructLayout(LayoutKind.Explicit)]
-                public struct XINPUT_KEYSTROKE
-                {
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(0)]
-                    public ushort VirtualKey;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(2)]
-                    public char Unicode;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(4)]
-                    public ushort Flags;
-
-                    [MarshalAs(UnmanagedType.I2)]
-                    [FieldOffset(5)]
-                    public byte UserIndex;
-
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(6)]
-                    public byte HidCode;
-                } // struct Keystroke
-
-            } // class Native
-
-
             #region // Structures ///////////////////////////////////////////////////////////////
 
 
@@ -911,6 +745,171 @@ namespace XInput.Wrapper
             };
             #endregion
         } // class Gamepad
+
+        internal class Native
+        {
+            [DllImport("xinput1_4.dll")]
+            public static extern int XInputGetState
+            (
+                uint dwUserIndex,
+                ref XINPUT_STATE pState
+            );
+
+            [DllImport("xinput1_4.dll")]
+            public static extern int XInputSetState
+            (
+                uint dwUserIndex,
+                ref XINPUT_VIBRATION pVibration
+            );
+
+            [DllImport("xinput1_4.dll")]
+            public static extern int XInputGetCapabilities
+            (
+                uint dwUserIndex,
+                uint dwFlags,
+                ref XINPUT_CAPABILITIES pCapabilities
+            );
+
+
+            [DllImport("xinput1_4.dll")]
+            public static extern int XInputGetBatteryInformation
+            (
+                uint dwUserIndex,
+                byte devType,
+                ref XINPUT_BATTERY_INFORMATION pBatteryInformation
+            );
+
+            [DllImport("xinput1_4.dll")]
+            public static extern int XInputGetKeystroke
+            (
+                uint dwUserIndex,
+                uint dwReserved,
+                ref XINPUT_KEYSTROKE pKeystroke
+            );
+
+            [DllImport("xinput1_4.dll")]
+            public static extern void XInputEnable
+            (
+                bool enable
+            );
+
+            // ex StatePacket
+            [StructLayout(LayoutKind.Explicit)]
+            public struct XINPUT_STATE
+            {
+                [FieldOffset(0)]
+                public uint dwPacketNumber;
+
+                [FieldOffset(4)]
+                public XINPUT_GAMEPAD Gamepad;
+            }
+
+            // ex PadState
+            [StructLayout(LayoutKind.Explicit)]
+            public struct XINPUT_GAMEPAD
+            {
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(0)]
+                public ushort wButtons;
+
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(2)]
+                public byte bLeftTrigger;
+
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(3)]
+                public byte bRightTrigger;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(4)]
+                public short sThumbLX;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(6)]
+                public short sThumbLY;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(8)]
+                public short sThumbRX;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(10)]
+                public short sThumbRY;
+            }
+
+            // ex VibrationSpeed
+            [StructLayout(LayoutKind.Sequential)]
+            public struct XINPUT_VIBRATION
+            {
+                [MarshalAs(UnmanagedType.I2)]
+                public ushort wLeftMotorSpeed;
+
+                [MarshalAs(UnmanagedType.I2)]
+                public ushort wRightMotorSpeed;
+            }
+
+            // ex DeviceCapability
+            [StructLayout(LayoutKind.Explicit)]
+            public struct XINPUT_CAPABILITIES
+            {
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(0)]
+                public byte Type;
+
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(1)]
+                public byte SubType;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(2)]
+                public ushort Flags;
+
+                [FieldOffset(4)]
+                public XINPUT_GAMEPAD Gamepad;
+
+                [FieldOffset(16)]
+                public XINPUT_VIBRATION Vibration;
+            }
+
+            // ex Battery.State
+            [StructLayout(LayoutKind.Explicit)]
+            public struct XINPUT_BATTERY_INFORMATION
+            {
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(0)]
+                public byte BatteryType;
+
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(1)]
+                public byte BatteryLevel;
+            }
+
+            // ex Keystroke
+            [StructLayout(LayoutKind.Explicit)]
+            public struct XINPUT_KEYSTROKE
+            {
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(0)]
+                public ushort VirtualKey;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(2)]
+                public char Unicode;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(4)]
+                public ushort Flags;
+
+                [MarshalAs(UnmanagedType.I2)]
+                [FieldOffset(5)]
+                public byte UserIndex;
+
+                [MarshalAs(UnmanagedType.I1)]
+                [FieldOffset(6)]
+                public byte HidCode;
+            } // struct Keystroke
+
+        } // class Native
 
         public class Point
         {

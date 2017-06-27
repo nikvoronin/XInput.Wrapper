@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="XInput.Wrapper.X">
+    <Position X="0.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="XInput.Wrapper.X.Gamepad">
+        <Compartments>
+          <Compartment Name="Fields" Collapsed="true" />
+          <Compartment Name="Properties" Collapsed="true" />
+          <Compartment Name="Methods" Collapsed="true" />
+          <Compartment Name="Events" Collapsed="true" />
+        </Compartments>
+        <NestedTypes>
+          <Struct Name="XInput.Wrapper.X.Gamepad.VibrationSpeed" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Gamepad.DeviceCapability" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Gamepad.Keystroke" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Class Name="XInput.Wrapper.X.Gamepad.Battery" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Class>
+          <Enum Name="XInput.Wrapper.X.Gamepad.CapabilityFlag" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+          <Struct Name="XInput.Wrapper.X.Gamepad.StatePacket" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Enum Name="XInput.Wrapper.X.Gamepad.ButtonFlag" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+          <Enum Name="XInput.Wrapper.X.Gamepad.DeviceType" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+          <Enum Name="XInput.Wrapper.X.Gamepad.ControllerType" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+          <Struct Name="XInput.Wrapper.X.Gamepad.PadState" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>X.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="XInput.Wrapper.X.Point" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>X.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="XInput.Wrapper.X.PointF" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>X.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="XInput.Wrapper.X.Native">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Struct Name="XInput.Wrapper.X.Native.XINPUT_STATE" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Native.XINPUT_GAMEPAD" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Native.XINPUT_VIBRATION" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Native.XINPUT_CAPABILITIES" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Native.XINPUT_BATTERY_INFORMATION" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+          <Struct Name="XInput.Wrapper.X.Native.XINPUT_KEYSTROKE" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Struct>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>X.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAADAAIBAAAAAAAEEAAAEAAAAQIAAAgIAAAAA=</HashCode>
+      <FileName>X.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="10" />
+</ClassDiagram>
