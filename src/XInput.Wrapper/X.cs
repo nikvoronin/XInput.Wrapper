@@ -87,7 +87,7 @@ namespace XInput.Wrapper
                 try
                 {
                     Gamepad.StatePacket state = new Gamepad.StatePacket();
-                    Gamepad.Native.XInputGetState(0, ref state);
+                    //Gamepad.Native.XInputGetState(0, ref state);
                     xinput_ready = true;
                 }
                 catch
@@ -106,10 +106,10 @@ namespace XInput.Wrapper
             public int LTrigger_Threshold = 30;
             public int RTrigger_Threshold = 30;
 
-            private readonly int userIndex;
+            public readonly uint Index;
 
-            public Battery.State batteryState;
-            public Battery.State BatteryState { get { return batteryState; } }
+            //public Battery.State batteryState;
+            //public Battery.State BatteryState { get { return batteryState; } }
 
             StatePacket state = new StatePacket();
 
@@ -119,20 +119,20 @@ namespace XInput.Wrapper
             int packetNumber = -1;
             public int PacketNumber { get { return state.PacketNumber; } }
             
-            internal Gamepad(int userIndex)
+            internal Gamepad(uint index)
             {
-                this.userIndex = userIndex;
+                Index = index;
             }
 
-            public Battery.State UpdateBattery()
-            {
-                Native.XInputGetBatteryInformation(
-                    userIndex,
-                    (byte)Battery.At.Gamepad,
-                    ref batteryState);
+            //public Battery.State UpdateBattery()
+            //{
+            //    Native.XInputGetBatteryInformation(
+            //        userIndex,
+            //        (byte)Battery.At.Gamepad,
+            //        ref batteryState);
 
-                return batteryState;
-            }
+            //    return batteryState;
+            //}
 
 
             #region // Capabilities //////////////////////////////////////////////////////////////////////////////////
@@ -142,10 +142,10 @@ namespace XInput.Wrapper
                 get
                 {
                     DeviceCapability caps = new DeviceCapability();
-                    Native.XInputGetCapabilities(
-                        userIndex,
-                        0x00000001, // always GAMEPAD_FLAG,
-                        ref caps);
+                    //Native.XInputGetCapabilities(
+                    //    userIndex,
+                    //    0x00000001, // always GAMEPAD_FLAG,
+                    //    ref caps);
                     return caps;
                 }
             }
@@ -294,8 +294,7 @@ namespace XInput.Wrapper
 
                 lastButtonsState = state.Current.Buttons;
                 packetNumber = state.PacketNumber;
-                int result =
-                    Native.XInputGetState(userIndex, ref state);
+                int result = 0;// STUB Native.XInputGetState(userIndex, ref state);
 
                 if (isConnected != (result == 0))
                 {
@@ -306,8 +305,8 @@ namespace XInput.Wrapper
                 }
 
                 // TODO do not update often. Should update only for wireless. ?shall I add an update interval
-                if (isConnected)
-                    UpdateBattery();
+                //if (isConnected)
+                //    UpdateBattery();
 
                 if (state.PacketNumber != packetNumber)
                 {
@@ -530,17 +529,6 @@ namespace XInput.Wrapper
                 Gamepad = 0x01  // always gamepad
             }
 
-            [Flags]
-            public enum CapabilityFlag : short
-            {
-                VoiceSupport    = 0x0004,
-                //Windows 8 and higher only
-                ForceFeedback   = 0x0001,   // Device supports force feedback functionality.
-                Wireless        = 0x0002,
-                PMD_Supported   = 0x0008,   // Device supports plug-in modules.
-                NoNavigation    = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
-            };
-
             [StructLayout(LayoutKind.Explicit)]
             public struct PadState
             {
@@ -704,10 +692,52 @@ namespace XInput.Wrapper
             };
             #endregion
 
+            public class Capability
+            {
+                uint uindex;
+                Native.XINPUT_CAPABILITIES caps;
+
+                internal Capability(uint userIndex)
+                {
+                    uindex = userIndex;
+                }
+
+                /// <summary>
+                /// Manually update capabilities. Done automatically when controller is connected.
+                /// </summary>
+                /// <returns>TRUE - if updated successfully</returns>
+                public bool Update()
+                {
+                    return
+                        Native.XInputGetCapabilities(
+                            uindex,
+                            0x00000001, // always GAMEPAD_FLAG,
+                            ref caps) == 0;
+                }
+
+                public bool Wireless { get { return ((Flag)caps.Flags).HasFlag(Flag.Wireless); } }
+                public bool ForceFeedback { get { return ((Flag)caps.Flags).HasFlag(Flag.ForceFeedback); } }
+                public bool VoiceSupport { get { return ((Flag)caps.Flags).HasFlag(Flag.VoiceSupport); } }
+                public bool NoNavigation { get { return ((Flag)caps.Flags).HasFlag(Flag.NoNavigation); } }
+                public bool PluginModules { get { return ((Flag)caps.Flags).HasFlag(Flag.PMD_Supported); } }
+
+                [Flags]
+                public enum Flag : ushort
+                {
+                    VoiceSupport  = 0x0004,
+
+                    //Windows 8 or higher only
+                    ForceFeedback = 0x0001,   // Device supports force feedback functionality.
+                    Wireless      = 0x0002,
+                    PMD_Supported = 0x0008,   // Device supports plug-in modules.
+                    NoNavigation  = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
+                };
+            } // class Capability
+
             public class Battery
             {
-                private uint uindex;
-                private Native.XINPUT_BATTERY_INFORMATION state;
+                uint uindex;
+                Native.XINPUT_BATTERY_INFORMATION state;
 
                 public readonly At Location;
                 public SourceType Type { get { return (SourceType)state.BatteryType; }}
@@ -722,7 +752,7 @@ namespace XInput.Wrapper
                 /// <summary>
                 /// Update battery state
                 /// </summary>
-                /// <returns>TRUE - if updated</returns>
+                /// <returns>TRUE - if updated successfully</returns>
                 public bool Update() {
                     return Native.XInputGetBatteryInformation(uindex, (byte)Location, ref state) == 0;
                 }

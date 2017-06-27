@@ -6,6 +6,11 @@
 
 > An unstable `develop` branch is in front of the project by default. If you want to use wrapper in production see stable `master` branch or download it from [Releases](https://github.com/nikvoronin/XInput.Wrapper/releases) or use `nuget` packets.
 
+# First steps
+
+- [Getting Started With XInput](https://msdn.microsoft.com/ru-ru/library/windows/desktop/ee417001(v=vs.85).aspx)
+- [Functions](https://msdn.microsoft.com/ru-ru/library/windows/desktop/ee417007(v=vs.85).aspx)
+
 # How to...
 
 ## Initialization
