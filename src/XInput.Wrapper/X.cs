@@ -56,10 +56,8 @@ namespace XInput.Wrapper
 
         static void UpdateLoop(List<Gamepad> updateSlots, CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
-            {
-                foreach (Gamepad pad in updateSlots)
-                {
+            while (!token.IsCancellationRequested) {
+                foreach (Gamepad pad in updateSlots) {
                     if (token.IsCancellationRequested)
                         break;
 
@@ -81,21 +79,18 @@ namespace XInput.Wrapper
         /// </summary>
         public static bool IsAvailable
         {
-            get
-            {
-                bool xinput_ready = false;
-                try
-                {
-                    Gamepad.StatePacket state = new Gamepad.StatePacket();
-                    //Gamepad.Native.XInputGetState(0, ref state);
-                    xinput_ready = true;
+            get {
+                bool isAvailable = false;
+                try {
+                    Native.XINPUT_STATE state = new Native.XINPUT_STATE();
+                    Native.XInputGetState(0, ref state);
+                    isAvailable = true;
                 }
-                catch
-                {
-                    xinput_ready = false;
+                catch {
+                    isAvailable = false;
                 }
 
-                return xinput_ready;
+                return isAvailable;
             }
         }
 
@@ -123,45 +118,6 @@ namespace XInput.Wrapper
             {
                 Index = index;
             }
-
-            //public Battery.State UpdateBattery()
-            //{
-            //    Native.XInputGetBatteryInformation(
-            //        userIndex,
-            //        (byte)Battery.At.Gamepad,
-            //        ref batteryState);
-
-            //    return batteryState;
-            //}
-
-
-            #region // Capabilities //////////////////////////////////////////////////////////////////////////////////
-
-            public DeviceCapability Capability
-            {
-                get
-                {
-                    DeviceCapability caps = new DeviceCapability();
-                    //Native.XInputGetCapabilities(
-                    //    userIndex,
-                    //    0x00000001, // always GAMEPAD_FLAG,
-                    //    ref caps);
-                    return caps;
-                }
-            }
-
-            public bool IsWireless
-            {
-                get { return Capability.Flags.HasFlag(CapabilityFlag.Wireless); }
-            }
-
-            public bool IsForceFeedback
-            {
-                get { return Capability.Flags.HasFlag(CapabilityFlag.ForceFeedback); }
-            }
-
-            #endregion
-
 
             #region // Buttons, sticks, thumbs, etc //////////////////////////////////////////////////////////////////
 
@@ -421,8 +377,9 @@ namespace XInput.Wrapper
                 if (durationRight > 0)
                     ffbR_StopTime = StopTimeFromNow(durationRight);
 
-                if (isConnected)
-                    Native.XInputSetState(userIndex, ref vibra);
+                // STUB
+                //if (isConnected)
+                //    Native.XInputSetState(userIndex, ref vibra);
 
                 if (durationLeft > -1)
                     ffbL_IsActive = durationLeft > 0;
@@ -501,28 +458,6 @@ namespace XInput.Wrapper
                 [FieldOffset(6)]
                 public byte HidCode;
             } // struct Keystroke
-
-            [StructLayout(LayoutKind.Explicit)]
-            public struct DeviceCapability
-            {
-                [MarshalAs(UnmanagedType.I1)]
-                [FieldOffset(0)]
-                public DeviceType IsGamepad;
-
-                [MarshalAs(UnmanagedType.I1)]
-                [FieldOffset(1)]
-                public PadType Type;
-
-                [MarshalAs(UnmanagedType.I2)]
-                [FieldOffset(2)]
-                public CapabilityFlag Flags;
-
-                [FieldOffset(4)]
-                public PadState Gamepad;
-
-                [FieldOffset(16)]
-                public VibrationSpeed ForceFeedback;
-            } // struct Capability
 
             public enum DeviceType : byte
             {
@@ -692,6 +627,7 @@ namespace XInput.Wrapper
             };
             #endregion
 
+            // LATER For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
             {
                 uint uindex;
@@ -784,7 +720,7 @@ namespace XInput.Wrapper
             } // class Battery
         } // class Gamepad
 
-        internal class Native
+        public class Native
         {
             [DllImport("xinput1_4.dll")]
             public static extern uint XInputGetState
