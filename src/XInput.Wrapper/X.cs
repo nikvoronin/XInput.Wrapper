@@ -207,11 +207,11 @@ namespace XInput.Wrapper
 
                 public SubType PadType { get { return (SubType)caps.SubType; } }
 
-                public bool Wireless { get { return ((Flag)caps.Flags).HasFlag(Flag.Wireless); } }
-                public bool ForceFeedback { get { return ((Flag)caps.Flags).HasFlag(Flag.ForceFeedback); } }
-                public bool VoiceSupport { get { return ((Flag)caps.Flags).HasFlag(Flag.VoiceSupport); } }
-                public bool NoNavigation { get { return ((Flag)caps.Flags).HasFlag(Flag.NoNavigation); } }
-                public bool PluginModules { get { return ((Flag)caps.Flags).HasFlag(Flag.PMD_Supported); } }
+                public bool IsWireless { get { return ((Flag)caps.Flags).HasFlag(Flag.Wireless); } }
+                public bool IsForceFeedback { get { return ((Flag)caps.Flags).HasFlag(Flag.ForceFeedback); } }
+                public bool IsVoiceSupport { get { return ((Flag)caps.Flags).HasFlag(Flag.VoiceSupport); } }
+                public bool IsNoNavigation { get { return ((Flag)caps.Flags).HasFlag(Flag.NoNavigation); } }
+                public bool IsPluginModules { get { return ((Flag)caps.Flags).HasFlag(Flag.PMD_Supported); } }
 
                 [Flags]
                 public enum Flag : ushort

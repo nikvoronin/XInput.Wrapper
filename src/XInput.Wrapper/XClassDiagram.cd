@@ -15,74 +15,54 @@
           <Compartment Name="Properties" Collapsed="true" />
           <Compartment Name="Methods" Collapsed="true" />
           <Compartment Name="Events" Collapsed="true" />
+          <Compartment Name="Nested Types" Collapsed="false" />
         </Compartments>
         <NestedTypes>
-          <Struct Name="XInput.Wrapper.X.Gamepad.VibrationSpeed" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Struct>
-          <Struct Name="XInput.Wrapper.X.Gamepad.DeviceCapability" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Struct>
-          <Struct Name="XInput.Wrapper.X.Gamepad.Keystroke" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Struct>
-          <Class Name="XInput.Wrapper.X.Gamepad.Battery" Collapsed="true">
+          <Class Name="XInput.Wrapper.X.Gamepad.Capability">
+            <NestedTypes>
+              <Enum Name="XInput.Wrapper.X.Gamepad.Capability.Flag" Collapsed="true">
+                <TypeIdentifier>
+                  <NewMemberFileName>X.cs</NewMemberFileName>
+                </TypeIdentifier>
+              </Enum>
+              <Enum Name="XInput.Wrapper.X.Gamepad.Capability.SubType" Collapsed="true">
+                <TypeIdentifier>
+                  <NewMemberFileName>X.cs</NewMemberFileName>
+                </TypeIdentifier>
+              </Enum>
+            </NestedTypes>
             <TypeIdentifier>
               <NewMemberFileName>X.cs</NewMemberFileName>
             </TypeIdentifier>
           </Class>
-          <Enum Name="XInput.Wrapper.X.Gamepad.CapabilityFlag" Collapsed="true">
+          <Class Name="XInput.Wrapper.X.Gamepad.Battery" Collapsed="true">
+            <NestedTypes>
+              <Enum Name="XInput.Wrapper.X.Gamepad.Battery.SourceType" Collapsed="true">
+                <TypeIdentifier>
+                  <NewMemberFileName>X.cs</NewMemberFileName>
+                </TypeIdentifier>
+              </Enum>
+              <Enum Name="XInput.Wrapper.X.Gamepad.Battery.ChargeLevel" Collapsed="true">
+                <TypeIdentifier>
+                  <NewMemberFileName>X.cs</NewMemberFileName>
+                </TypeIdentifier>
+              </Enum>
+              <Enum Name="XInput.Wrapper.X.Gamepad.Battery.At" Collapsed="true">
+                <TypeIdentifier>
+                  <NewMemberFileName>X.cs</NewMemberFileName>
+                </TypeIdentifier>
+              </Enum>
+            </NestedTypes>
             <TypeIdentifier>
               <NewMemberFileName>X.cs</NewMemberFileName>
             </TypeIdentifier>
-          </Enum>
-          <Struct Name="XInput.Wrapper.X.Gamepad.StatePacket" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Struct>
-          <Enum Name="XInput.Wrapper.X.Gamepad.ButtonFlag" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Enum>
-          <Enum Name="XInput.Wrapper.X.Gamepad.DeviceType" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Enum>
-          <Enum Name="XInput.Wrapper.X.Gamepad.ControllerType" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Enum>
-          <Struct Name="XInput.Wrapper.X.Gamepad.PadState" Collapsed="true">
-            <TypeIdentifier>
-              <NewMemberFileName>X.cs</NewMemberFileName>
-            </TypeIdentifier>
-          </Struct>
+          </Class>
         </NestedTypes>
         <TypeIdentifier>
           <NewMemberFileName>X.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Class Name="XInput.Wrapper.X.Point" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>X.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="XInput.Wrapper.X.PointF" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>X.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="XInput.Wrapper.X.Native">
+      <Class Name="XInput.Wrapper.X.Native" Collapsed="true">
         <Compartments>
           <Compartment Name="Nested Types" Collapsed="false" />
         </Compartments>
@@ -122,9 +102,19 @@
           <NewMemberFileName>X.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
+      <Class Name="XInput.Wrapper.X.Point" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>X.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="XInput.Wrapper.X.PointF" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>X.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAQAAADAAIBAAAAAAAEEAAAEAAAAQIAAAgIAAAAA=</HashCode>
+      <HashCode>AAAAAQAAADAAAAAAAAAAAEAAAAEAAAAQIAAAgIAAAAA=</HashCode>
       <FileName>X.cs</FileName>
     </TypeIdentifier>
   </Class>
