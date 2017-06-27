@@ -62,11 +62,15 @@ namespace XInput.Wrapper
             uint packetNumber = 0;
             public uint PacketNumber { get { return state.dwPacketNumber; } }
 
+            Button A;
+
             internal Gamepad(uint index)
             {
                 Index = index;
                 GamepadBattery = new Battery(index, Battery.At.Gamepad);
                 HeadsetBattery = new Battery(index, Battery.At.Headset);
+
+                A = new Button(Button.Flag.A, false);
             }
 
             bool isConnected;
@@ -96,7 +100,7 @@ namespace XInput.Wrapper
                     if(ConnectionChanged != null)
                         OnConnectionChanged();
                 }
-                
+
                 // UNDONE do not update often. Should update only for wireless. ?shall I add an update interval
                 //if (isConnected)
                 //    UpdateBattery();
@@ -108,7 +112,15 @@ namespace XInput.Wrapper
                         OnStateChanged();
                 }
 
-                // UNDONE KeyDown is a long event
+                // STUB
+                // make list of buttons and axis
+                // and update it
+                if (isConnected && isChanged)
+                {
+                    A.Update(ref state);
+                }
+
+                // UNDONE KeyDown should send regular 
                 //if ((Buttons != 0) && (KeyDown != null))
                 //    OnKeyDown();
 
@@ -163,48 +175,76 @@ namespace XInput.Wrapper
                 else
                     __OnStateChanged(null);
             }
-
-            // UNDONE keydown events
-            //public event EventHandler KeyDown;
-            //protected virtual void __OnKeyDown(object o)
-            //{
-            //    EventHandler pceh = KeyDown;
-            //    pceh?.Invoke(this, EventArgs.Empty);
-            //}
-
-            //public void OnKeyDown()
-            //{
-            //    if (uiContext != null)
-            //        uiContext.Post(__OnKeyDown, null);
-            //    else
-            //        __OnKeyDown(null);
-            //}
             #endregion
 
             public class Button
             {
                 public readonly Flag Id;
                 public readonly string Name = string.Empty;
-                public readonly bool IsAnalog;
 
-                public short MinValue = short.MinValue;
-                public short MaxValue = short.MaxValue;
-                public short Value = 0;
-                public float ValueN = 0f;
+                public bool Pressed;
 
                 internal Button(Flag id, bool isAnalog)
                 {
                     Id = id;
-                    IsAnalog = isAnalog;
 
                     if (Names.ContainsKey(id))
                         Name = Names[id];
                 }
 
-                // STUB
+                /// <summary>
+                /// Updates button state
+                /// </summary>
+                /// <param name="state">Gamepad global state</param>
+                /// <returns>TRUE - button state was changed</returns>
                 internal bool Update(ref Native.XINPUT_STATE state)
                 {
-                    return false;
+                    bool hasFlag = ((Flag)state.Gamepad.wButtons).HasFlag(Id);
+                    bool stateChanged = hasFlag != Pressed;
+
+                    if (stateChanged)
+                    {
+                        // Do not call anything if we don't have any subscribers
+                        if ((KeyDown != null) && hasFlag && !Pressed)
+                            OnKeyDown();
+                        else
+                            if ((KeyUp != null) && Pressed && !hasFlag)
+                                OnKeyUp();
+
+                        Pressed = hasFlag && !Pressed;
+                    }
+
+                    return stateChanged;
+                }
+
+                public event EventHandler KeyDown;
+                protected virtual void __OnKeyDown(object o)
+                {
+                    EventHandler pceh = KeyDown;
+                    pceh?.Invoke(this, EventArgs.Empty);
+                }
+
+                public void OnKeyDown()
+                {
+                    if (uiContext != null)
+                        uiContext.Post(__OnKeyDown, this);
+                    else
+                        __OnKeyDown(this);
+                }
+
+                public event EventHandler KeyUp;
+                protected virtual void __OnKeyUp(object o)
+                {
+                    EventHandler pceh = KeyUp;
+                    pceh?.Invoke(this, EventArgs.Empty);
+                }
+
+                public void OnKeyUp()
+                {
+                    if (uiContext != null)
+                        uiContext.Post(__OnKeyUp, this);
+                    else
+                        __OnKeyUp(this);
                 }
 
                 [Flags]
