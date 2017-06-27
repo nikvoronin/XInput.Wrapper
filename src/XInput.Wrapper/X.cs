@@ -181,6 +181,69 @@ namespace XInput.Wrapper
             //}
             #endregion
 
+            public class Button
+            {
+                public readonly Flag Id;
+                public readonly string Name = string.Empty;
+                public readonly bool IsAnalog;
+
+                public short MinValue = short.MinValue;
+                public short MaxValue = short.MaxValue;
+                public short Value = 0;
+                public float ValueN = 0f;
+
+                internal Button(Flag id, bool isAnalog)
+                {
+                    Id = id;
+                    IsAnalog = isAnalog;
+
+                    if (Names.ContainsKey(id))
+                        Name = Names[id];
+                }
+
+                // STUB
+                internal bool Update(ref Native.XINPUT_STATE state)
+                {
+                    return false;
+                }
+
+                [Flags]
+                public enum Flag : uint
+                {
+                    Up = 0x0001,
+                    Down = 0x0002,
+                    Left = 0x0004,
+                    Right = 0x0008,
+                    Start = 0x0010,
+                    Back = 0x0020,
+                    LStick = 0x0040,
+                    RStick = 0x0080,
+                    LBumper = 0x0100,
+                    RBumper = 0x0200,
+                    A = 0x1000,
+                    B = 0x2000,
+                    X = 0x4000,
+                    Y = 0x8000,
+                };
+
+                public readonly Dictionary<Flag, string> Names = new Dictionary<Flag, string>() {
+                    { Flag.Up, "Dpad_Up" },
+                    { Flag.Down, "Dpad_Down" },
+                    { Flag.Left, "Dpad_Left" },
+                    { Flag.Right, "Dpad_Right" },
+                    { Flag.Start, "Start" },
+                    { Flag.Back, "Back" },
+                    { Flag.LStick, "Left_Stick" },
+                    { Flag.RStick, "Right_Stick" },
+                    { Flag.LBumper, "Left_Bumper" },
+                    { Flag.RBumper, "Right_Bumper" },
+                    { Flag.A, "Button_A" },
+                    { Flag.B, "Button_B" },
+                    { Flag.X, "Button_X" },
+                    { Flag.Y, "Button_Y" }
+                };
+            }
+
             // LATER For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
             {
@@ -193,7 +256,7 @@ namespace XInput.Wrapper
                 }
 
                 /// <summary>
-                /// Manually update capabilities. Done automatically when controller is connected.
+                /// Update capabilities. Done automatically when controller is connected.
                 /// </summary>
                 /// <returns>TRUE - if updated successfully</returns>
                 public bool Update()

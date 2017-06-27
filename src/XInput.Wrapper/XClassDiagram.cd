@@ -57,6 +57,11 @@
               <NewMemberFileName>X.cs</NewMemberFileName>
             </TypeIdentifier>
           </Class>
+          <Class Name="XInput.Wrapper.X.Gamepad.Button" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>X.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Class>
         </NestedTypes>
         <TypeIdentifier>
           <NewMemberFileName>X.cs</NewMemberFileName>
