@@ -514,7 +514,7 @@ namespace XInput.Wrapper
                 (
                     uint dwUserIndex,
                     uint dwReserved,
-                    ref Keystroke pKeystroke
+                    ref XINPUT_KEYSTROKE pKeystroke
                 );
 
                 [DllImport("xinput1_4.dll")]
@@ -613,6 +613,32 @@ namespace XInput.Wrapper
                     [FieldOffset(1)]
                     public byte BatteryLevel;
                 }
+
+                // ex Keystroke
+                [StructLayout(LayoutKind.Explicit)]
+                public struct XINPUT_KEYSTROKE
+                {
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(0)]
+                    public ushort VirtualKey;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(2)]
+                    public char Unicode;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(4)]
+                    public ushort Flags;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(5)]
+                    public byte UserIndex;
+
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(6)]
+                    public byte HidCode;
+                } // struct Keystroke
+
             } // class Native
 
 
