@@ -481,22 +481,22 @@ namespace XInput.Wrapper
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetState
                 (
-                    int dwUserIndex,
+                    uint dwUserIndex,
                     ref XINPUT_STATE pState
                 );
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputSetState
                 (
-                    int dwUserIndex,
+                    uint dwUserIndex,
                     ref XINPUT_VIBRATION pVibration
                 );
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetCapabilities
                 (
-                    int dwUserIndex,
-                    int dwFlags,
+                    uint dwUserIndex,
+                    uint dwFlags,
                     ref XINPUT_CAPABILITIES pCapabilities
                 );
 
@@ -504,16 +504,16 @@ namespace XInput.Wrapper
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetBatteryInformation
                 (
-                    int dwUserIndex,
+                    uint dwUserIndex,
                     byte devType,
-                    ref Battery.State pBatteryInformation
+                    ref XINPUT_BATTERY_INFORMATION pBatteryInformation
                 );
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetKeystroke
                 (
-                    int dwUserIndex,
-                    int dwReserved,
+                    uint dwUserIndex,
+                    uint dwReserved,
                     ref Keystroke pKeystroke
                 );
 
@@ -577,6 +577,7 @@ namespace XInput.Wrapper
                     [MarshalAs(UnmanagedType.I2)]
                     public ushort wRightMotorSpeed;
                 }
+
                 // ex DeviceCapability
                 [StructLayout(LayoutKind.Explicit)]
                 public struct XINPUT_CAPABILITIES
@@ -598,6 +599,19 @@ namespace XInput.Wrapper
 
                     [FieldOffset(16)]
                     public XINPUT_VIBRATION Vibration;
+                }
+
+                // ex Battery.State
+                [StructLayout(LayoutKind.Explicit)]
+                public struct XINPUT_BATTERY_INFORMATION
+                {
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(0)]
+                    public byte BatteryType;
+
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(1)]
+                    public byte BatteryLevel;
                 }
             } // class Native
 
