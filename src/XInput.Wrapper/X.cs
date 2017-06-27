@@ -512,7 +512,7 @@ namespace XInput.Wrapper
 
                 [MarshalAs(UnmanagedType.I1)]
                 [FieldOffset(1)]
-                public ControllerType Type;
+                public PadType Type;
 
                 [MarshalAs(UnmanagedType.I2)]
                 [FieldOffset(2)]
@@ -669,48 +669,7 @@ namespace XInput.Wrapper
                 }
             } // struct VibrationSpeed
 
-            public class Battery
-            {
-                [StructLayout(LayoutKind.Explicit)]
-                public struct State
-                {
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(0)]
-                    public Type BatteryType;
-
-                    [MarshalAs(UnmanagedType.I1)]
-                    [FieldOffset(1)]
-                    public Charge ChargeLevel;
-                } // struct Information
-
-                // Flags for battery status level
-                public enum Type : byte
-                {
-                    Disconnected = 0x00,    // This device is not connected
-                    Wired        = 0x01,    // Wired device, no battery
-                    Alkaline     = 0x02,    // Alkaline battery source
-                    NiMh         = 0x03,    // Nickel Metal Hydride battery source
-                    Unknown      = 0xFF,    // Cannot determine the battery type
-                };
-
-                // These are only valid for wireless, connected devices, with known battery types
-                // The amount of use time remaining depends on the type of device.
-                public enum Charge : byte
-                {
-                    Empty   = 0x00,
-                    Low     = 0x01,
-                    Medium  = 0x02,
-                    Full    = 0x03
-                };
-
-                public enum At : byte
-                {
-                    Gamepad = 0x00,
-                    Headset = 0x01,
-                }
-            } // class Battery
-
-            public enum ControllerType : byte
+            public enum PadType : byte
             {
                 Unknown         = 0x00,
                 Gamepad         = 0x01,
@@ -744,6 +703,55 @@ namespace XInput.Wrapper
                 Y       = 0x8000,
             };
             #endregion
+
+            public class Battery
+            {
+                private uint uindex;
+                private Native.XINPUT_BATTERY_INFORMATION state;
+
+                public readonly Location At;
+                public SourceType Type { get { return (SourceType)state.BatteryType; }}
+                public ChargeLevel Level { get { return (ChargeLevel)state.BatteryLevel; } }
+
+                internal Battery(uint userIndex, Location at)
+                {
+                    uindex = userIndex;
+                    At = at;
+                }
+
+                /// <summary>
+                /// Update battery state
+                /// </summary>
+                /// <returns>TRUE - if updated</returns>
+                public bool Update() {
+                    return Native.XInputGetBatteryInformation(uindex, (byte)At, ref state) == 0;
+                }
+
+                public enum SourceType : byte
+                {
+                    Disconnected    = 0x00,
+                    WiredNoBattery  = 0x01,
+                    Alkaline        = 0x02,
+                    NiMh            = 0x03,
+                    Unknown         = 0xFF, 
+                };
+
+                // These are only valid for wireless, connected devices, with known battery types
+                // The amount of use time remaining depends on the type of device.
+                public enum ChargeLevel : byte
+                {
+                    Empty   = 0x00,
+                    Low     = 0x01,
+                    Medium  = 0x02,
+                    Full    = 0x03
+                };
+
+                public enum Location : byte
+                {
+                    Gamepad = 0x00,
+                    Headset = 0x01,
+                }
+            } // class Battery
         } // class Gamepad
 
         internal class Native
