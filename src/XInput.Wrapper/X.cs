@@ -709,14 +709,14 @@ namespace XInput.Wrapper
                 private uint uindex;
                 private Native.XINPUT_BATTERY_INFORMATION state;
 
-                public readonly Location At;
+                public readonly At Location;
                 public SourceType Type { get { return (SourceType)state.BatteryType; }}
                 public ChargeLevel Level { get { return (ChargeLevel)state.BatteryLevel; } }
 
-                internal Battery(uint userIndex, Location at)
+                internal Battery(uint userIndex, At at)
                 {
                     uindex = userIndex;
-                    At = at;
+                    Location = at;
                 }
 
                 /// <summary>
@@ -724,7 +724,7 @@ namespace XInput.Wrapper
                 /// </summary>
                 /// <returns>TRUE - if updated</returns>
                 public bool Update() {
-                    return Native.XInputGetBatteryInformation(uindex, (byte)At, ref state) == 0;
+                    return Native.XInputGetBatteryInformation(uindex, (byte)Location, ref state) == 0;
                 }
 
                 public enum SourceType : byte
@@ -746,7 +746,7 @@ namespace XInput.Wrapper
                     Full    = 0x03
                 };
 
-                public enum Location : byte
+                public enum At : byte
                 {
                     Gamepad = 0x00,
                     Headset = 0x01,
