@@ -497,7 +497,7 @@ namespace XInput.Wrapper
                 (
                     int dwUserIndex,
                     int dwFlags,
-                    ref DeviceCapability pCapabilities
+                    ref XINPUT_CAPABILITIES pCapabilities
                 );
 
 
@@ -576,6 +576,28 @@ namespace XInput.Wrapper
 
                     [MarshalAs(UnmanagedType.I2)]
                     public ushort wRightMotorSpeed;
+                }
+                // ex DeviceCapability
+                [StructLayout(LayoutKind.Explicit)]
+                public struct XINPUT_CAPABILITIES
+                {
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(0)]
+                    public byte Type;
+
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(1)]
+                    public byte SubType;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(2)]
+                    public ushort Flags;
+
+                    [FieldOffset(4)]
+                    public XINPUT_GAMEPAD Gamepad;
+
+                    [FieldOffset(16)]
+                    public XINPUT_VIBRATION Vibration;
                 }
             } // class Native
 
