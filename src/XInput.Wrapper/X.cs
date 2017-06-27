@@ -87,7 +87,7 @@ namespace XInput.Wrapper
                 try
                 {
                     Gamepad.StatePacket state = new Gamepad.StatePacket();
-                    Gamepad.InputWrapper.XInputGetState(0, ref state);
+                    Gamepad.Native.XInputGetState(0, ref state);
                     xinput_ready = true;
                 }
                 catch
@@ -113,8 +113,8 @@ namespace XInput.Wrapper
 
             StatePacket state = new StatePacket();
 
-            Button lastButtonsState = 0;
-            public Button Buttons { get { return state.Current.Buttons; } }
+            ButtonFlag lastButtonsState = 0;
+            public ButtonFlag Buttons { get { return state.Current.Buttons; } }
 
             int packetNumber = -1;
             public int PacketNumber { get { return state.PacketNumber; } }
@@ -126,7 +126,7 @@ namespace XInput.Wrapper
 
             public Battery.State UpdateBattery()
             {
-                InputWrapper.XInputGetBatteryInformation(
+                Native.XInputGetBatteryInformation(
                     userIndex,
                     (byte)Battery.At.Gamepad,
                     ref batteryState);
@@ -137,27 +137,27 @@ namespace XInput.Wrapper
 
             #region // Capabilities //////////////////////////////////////////////////////////////////////////////////
 
-            public Capability Capabilities
+            public DeviceCapability Capability
             {
                 get
                 {
-                    Capability capabilities = new Capability();
-                    InputWrapper.XInputGetCapabilities(
+                    DeviceCapability caps = new DeviceCapability();
+                    Native.XInputGetCapabilities(
                         userIndex,
                         0x00000001, // always GAMEPAD_FLAG,
-                        ref capabilities);
-                    return capabilities;
+                        ref caps);
+                    return caps;
                 }
             }
 
             public bool IsWireless
             {
-                get { return (Capabilities.Flags & CapabilityFlags.Wireless) == CapabilityFlags.Wireless; }
+                get { return Capability.Flags.HasFlag(CapabilityFlag.Wireless); }
             }
 
             public bool IsForceFeedback
             {
-                get { return (Capabilities.Flags & CapabilityFlags.ForceFeedback) == CapabilityFlags.ForceFeedback; }
+                get { return Capability.Flags.HasFlag(CapabilityFlag.ForceFeedback); }
             }
 
             #endregion
@@ -166,47 +166,47 @@ namespace XInput.Wrapper
             #region // Buttons, sticks, thumbs, etc //////////////////////////////////////////////////////////////////
 
 
-            public bool Up_down { get { return state.Current.IsButtonDown(Button.Up); }}
-            public bool Up_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Up); }}
+            public bool Up_down { get { return state.Current.IsButtonDown(ButtonFlag.Up); }}
+            public bool Up_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Up); }}
 
-            public bool Down_down { get { return state.Current.IsButtonDown(Button.Down); }}
-            public bool Down_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Down); }}
+            public bool Down_down { get { return state.Current.IsButtonDown(ButtonFlag.Down); }}
+            public bool Down_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Down); }}
 
-            public bool Left_down { get { return state.Current.IsButtonDown(Button.Left); }}
-            public bool Left_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Left); }}
+            public bool Left_down { get { return state.Current.IsButtonDown(ButtonFlag.Left); }}
+            public bool Left_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Left); }}
 
-            public bool Right_down { get { return state.Current.IsButtonDown(Button.Right); }}
-            public bool Right_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Right); }}
+            public bool Right_down { get { return state.Current.IsButtonDown(ButtonFlag.Right); }}
+            public bool Right_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Right); }}
 
-            public bool A_down { get { return state.Current.IsButtonDown(Button.A); }}
-            public bool A_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.A); }}
+            public bool A_down { get { return state.Current.IsButtonDown(ButtonFlag.A); }}
+            public bool A_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.A); }}
 
-            public bool B_down { get { return state.Current.IsButtonDown(Button.B); }}
-            public bool B_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.B); }}
+            public bool B_down { get { return state.Current.IsButtonDown(ButtonFlag.B); }}
+            public bool B_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.B); }}
 
-            public bool X_down { get { return state.Current.IsButtonDown(Button.X); }}
-            public bool X_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.X); }}
+            public bool X_down { get { return state.Current.IsButtonDown(ButtonFlag.X); }}
+            public bool X_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.X); }}
 
-            public bool Y_down { get { return state.Current.IsButtonDown(Button.Y); }}
-            public bool Y_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Y); }}
+            public bool Y_down { get { return state.Current.IsButtonDown(ButtonFlag.Y); }}
+            public bool Y_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Y); }}
 
-            public bool Back_down { get { return state.Current.IsButtonDown(Button.Back); }}
-            public bool Back_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Back); }}
+            public bool Back_down { get { return state.Current.IsButtonDown(ButtonFlag.Back); }}
+            public bool Back_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Back); }}
 
-            public bool Start_down { get { return state.Current.IsButtonDown(Button.Start); }}
-            public bool Start_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.Start); }}
+            public bool Start_down { get { return state.Current.IsButtonDown(ButtonFlag.Start); }}
+            public bool Start_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.Start); }}
 
-            public bool LBumper_down { get { return state.Current.IsButtonDown(Button.LBumper); }}
-            public bool LBumper_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.LBumper); }}
+            public bool LBumper_down { get { return state.Current.IsButtonDown(ButtonFlag.LBumper); }}
+            public bool LBumper_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.LBumper); }}
 
-            public bool RBumper_down { get { return state.Current.IsButtonDown(Button.RBumper); }}
-            public bool RBumper_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.RBumper); }}
+            public bool RBumper_down { get { return state.Current.IsButtonDown(ButtonFlag.RBumper); }}
+            public bool RBumper_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.RBumper); }}
 
-            public bool LStick_down { get { return state.Current.IsButtonDown(Button.LStick); }}
-            public bool LStick_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.LStick); }}
+            public bool LStick_down { get { return state.Current.IsButtonDown(ButtonFlag.LStick); }}
+            public bool LStick_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.LStick); }}
 
-            public bool RStick_down { get { return state.Current.IsButtonDown(Button.RStick); }}
-            public bool RStick_up { get { return state.Current.IsButtonUp(lastButtonsState, Button.RStick); }}
+            public bool RStick_down { get { return state.Current.IsButtonDown(ButtonFlag.RStick); }}
+            public bool RStick_up { get { return state.Current.IsButtonUp(lastButtonsState, ButtonFlag.RStick); }}
 
             public int LTrigger { get { return state.Current.LeftTrigger; } }
 
@@ -282,7 +282,7 @@ namespace XInput.Wrapper
             bool isConnected;
             public bool IsConnected { get { return isConnected; }}
 
-            public bool Enable { set { InputWrapper.XInputEnable(value); } }
+            public bool Enable { set { Native.XInputEnable(value); } }
 
             /// <summary>
             /// Update gamepad data
@@ -295,7 +295,7 @@ namespace XInput.Wrapper
                 lastButtonsState = state.Current.Buttons;
                 packetNumber = state.PacketNumber;
                 int result =
-                    InputWrapper.XInputGetState(userIndex, ref state);
+                    Native.XInputGetState(userIndex, ref state);
 
                 if (isConnected != (result == 0))
                 {
@@ -423,7 +423,7 @@ namespace XInput.Wrapper
                     ffbR_StopTime = StopTimeFromNow(durationRight);
 
                 if (isConnected)
-                    InputWrapper.XInputSetState(userIndex, ref vibra);
+                    Native.XInputSetState(userIndex, ref vibra);
 
                 if (durationLeft > -1)
                     ffbL_IsActive = durationLeft > 0;
@@ -476,45 +476,45 @@ namespace XInput.Wrapper
             #endregion
 
 
-            internal class InputWrapper
+            internal class Native
             {
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetState
                 (
-                    int dwUserIndex,  // [in] Index of the gamer associated with the device
-                    ref StatePacket pState        // [out] Receives the current state
+                    int dwUserIndex,
+                    ref XINPUT_STATE pState
                 );
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputSetState
                 (
-                    int dwUserIndex,  // [in] Index of the gamer associated with the device
-                    ref VibrationSpeed pVibration    // [in, out] The vibration information to send to the controller
+                    int dwUserIndex,
+                    ref XINPUT_VIBRATION pVibration
                 );
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetCapabilities
                 (
-                    int dwUserIndex,   // [in] Index of the gamer associated with the device
-                    int dwFlags,       // [in] Input flags that identify the device type
-                    ref Capability pCapabilities  // [out] Receives the capabilities
+                    int dwUserIndex,
+                    int dwFlags,
+                    ref DeviceCapability pCapabilities
                 );
 
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetBatteryInformation
                 (
-                    int dwUserIndex,        // Index of the gamer associated with the device
-                    byte devType,            // Which device on this user index
-                    ref Battery.State pBatteryInformation // Contains the level and types of batteries
+                    int dwUserIndex,
+                    byte devType,
+                    ref Battery.State pBatteryInformation
                 );
 
                 [DllImport("xinput1_4.dll")]
                 public static extern int XInputGetKeystroke
                 (
-                    int dwUserIndex,              // Index of the gamer associated with the device
-                    int dwReserved,               // Reserved for future use
-                    ref Keystroke pKeystroke    // Pointer to an XINPUT_KEYSTROKE structure that receives an input event.
+                    int dwUserIndex,
+                    int dwReserved,
+                    ref Keystroke pKeystroke
                 );
 
                 [DllImport("xinput1_4.dll")]
@@ -522,7 +522,62 @@ namespace XInput.Wrapper
                 (
                     bool enable
                 );
-            } // class InputWrapper
+
+                // ex StatePacket
+                [StructLayout(LayoutKind.Explicit)]
+                public struct XINPUT_STATE
+                {
+                    [FieldOffset(0)]
+                    public uint dwPacketNumber;
+
+                    [FieldOffset(4)]
+                    public XINPUT_GAMEPAD Gamepad;
+                }
+
+                // ex PadState
+                [StructLayout(LayoutKind.Explicit)]
+                public struct XINPUT_GAMEPAD
+                {
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(0)]
+                    public ushort wButtons;
+
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(2)]
+                    public byte bLeftTrigger;
+
+                    [MarshalAs(UnmanagedType.I1)]
+                    [FieldOffset(3)]
+                    public byte bRightTrigger;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(4)]
+                    public short sThumbLX;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(6)]
+                    public short sThumbLY;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(8)]
+                    public short sThumbRX;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    [FieldOffset(10)]
+                    public short sThumbRY;
+                }
+
+                // ex VibrationSpeed
+                [StructLayout(LayoutKind.Sequential)]
+                public struct XINPUT_VIBRATION
+                {
+                    [MarshalAs(UnmanagedType.I2)]
+                    public ushort wLeftMotorSpeed;
+
+                    [MarshalAs(UnmanagedType.I2)]
+                    public ushort wRightMotorSpeed;
+                }
+            } // class Native
 
 
             #region // Structures ///////////////////////////////////////////////////////////////
@@ -553,7 +608,7 @@ namespace XInput.Wrapper
             } // struct Keystroke
 
             [StructLayout(LayoutKind.Explicit)]
-            public struct Capability
+            public struct DeviceCapability
             {
                 [MarshalAs(UnmanagedType.I1)]
                 [FieldOffset(0)]
@@ -561,11 +616,11 @@ namespace XInput.Wrapper
 
                 [MarshalAs(UnmanagedType.I1)]
                 [FieldOffset(1)]
-                public Type Type;
+                public ControllerType Type;
 
                 [MarshalAs(UnmanagedType.I2)]
                 [FieldOffset(2)]
-                public CapabilityFlags Flags;
+                public CapabilityFlag Flags;
 
                 [FieldOffset(4)]
                 public PadState Gamepad;
@@ -580,7 +635,7 @@ namespace XInput.Wrapper
             }
 
             [Flags]
-            public enum CapabilityFlags : short
+            public enum CapabilityFlag : short
             {
                 VoiceSupport    = 0x0004,
                 //Windows 8 and higher only
@@ -595,7 +650,7 @@ namespace XInput.Wrapper
             {
                 [MarshalAs(UnmanagedType.I2)]
                 [FieldOffset(0)]
-                public Button Buttons;
+                public ButtonFlag Buttons;
 
                 [MarshalAs(UnmanagedType.I1)]
                 [FieldOffset(2)]
@@ -621,19 +676,19 @@ namespace XInput.Wrapper
                 [FieldOffset(10)]
                 public short RStickY;
 
-                public bool IsButtonDown(Button buttonMask)
+                public bool IsButtonDown(ButtonFlag buttonMask)
                 {
                     return (Buttons & buttonMask) == buttonMask;
                 }
 
-                public bool IsButtonUp(Button lastButtonsState, Button buttonMask)
+                public bool IsButtonUp(ButtonFlag lastButtonsState, ButtonFlag buttonMask)
                 {
                     return
                         ((lastButtonsState & buttonMask) == buttonMask) &&
                         ((Buttons & buttonMask) != buttonMask);
                 }
 
-                public bool IsButtonPresent(Button buttonMask)
+                public bool IsButtonPresent(ButtonFlag buttonMask)
                 {
                     return (Buttons & buttonMask) == buttonMask;
                 }
@@ -759,8 +814,7 @@ namespace XInput.Wrapper
                 }
             } // class Battery
 
-            [Flags]
-            public enum Type : byte
+            public enum ControllerType : byte
             {
                 Unknown         = 0x00,
                 Gamepad         = 0x01,
@@ -776,7 +830,7 @@ namespace XInput.Wrapper
             };
 
             [Flags]
-            public enum Button : ushort
+            public enum ButtonFlag : ushort
             {
                 Up      = 0x0001,
                 Down    = 0x0002,
