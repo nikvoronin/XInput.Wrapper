@@ -1,6 +1,6 @@
-﻿// XInput.Wrapper by Nikolai Voronin
+// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.4 (June 27, 2017)
+// Version 0.4 (June 30, 2017)
 // Under the MIT License (MIT)
 //
 // Stick = Thumb
@@ -26,7 +26,6 @@ namespace XInput.Wrapper
         public static readonly Gamepad Gamepad2 = new Gamepad(1);
         public static readonly Gamepad Gamepad3 = new Gamepad(2);
         public static readonly Gamepad Gamepad4 = new Gamepad(3);
-
         static X() { }
 
         /// <summary>
@@ -35,14 +34,18 @@ namespace XInput.Wrapper
         /// </summary>
         public static bool IsAvailable
         {
-            get {
+            get
+            {
                 bool isAvailable = false;
-                try {
+
+                try
+                {
                     Native.XINPUT_STATE state = new Native.XINPUT_STATE();
                     Native.XInputGetState(0, ref state);
                     isAvailable = true;
                 }
-                catch {
+                catch
+                {
                     isAvailable = false;
                 }
 
@@ -61,6 +64,7 @@ namespace XInput.Wrapper
 
             uint packetNumber = 0;
             public uint PacketNumber { get { return state.dwPacketNumber; } }
+            public bool SendKeyDownEveryTick { get; set; }
 
             public Button A;
             public ButtonFlags ButtonsState = ButtonFlags.None;
@@ -79,8 +83,7 @@ namespace XInput.Wrapper
             }
 
             bool isConnected;
-            public bool IsConnected { get { return isConnected; }}
-
+            public bool IsConnected { get { return isConnected; } }
             public bool Enable { set { Native.XInputEnable(value); } }
 
             /// <summary>
@@ -101,7 +104,7 @@ namespace XInput.Wrapper
                 {
                     isChanged = true;
                     isConnected = (result == 0);
-                    if(ConnectionChanged != null)
+                    if (ConnectionChanged != null)
                         OnConnectionChanged();
                 }
 
@@ -124,14 +127,15 @@ namespace XInput.Wrapper
                     ButtonFlags downButtons = ButtonFlags.None;
                     ButtonFlags upButtons = ButtonFlags.None;
 
-                    foreach(Button tt in Buttons)
+                    foreach (Button tt in Buttons)
                     {
                         Button.Went wh = tt.Update(ref state);
+
                         if (wh == Button.Went.Down)
                             downButtons |= tt.Mask;
                         else
                             if (wh == Button.Went.Up)
-                                upButtons |= tt.Mask;
+                            upButtons |= tt.Mask;
                     }
 
                     if (downButtons != ButtonFlags.None)
@@ -140,10 +144,6 @@ namespace XInput.Wrapper
                     if (upButtons != ButtonFlags.None)
                         OnKeyUp(upButtons);
                 }
-
-                // UNDONE KeyDown should send regular 
-                //if ((Buttons != 0) && (KeyDown != null))
-                //    OnKeyDown();
 
                 // UNDONE Force feedback
                 //DateTime now = DateTime.UtcNow;
@@ -164,7 +164,6 @@ namespace XInput.Wrapper
             } // Update()
 
             #region // Events ////////////////////////////////////////////////////////////////////
-
 
             public event EventHandler ConnectionChanged;
             public event EventHandler StateChanged;
@@ -215,7 +214,6 @@ namespace XInput.Wrapper
             public class KeyEventArgs : EventArgs
             {
                 public ButtonFlags Buttons = ButtonFlags.None;
-
                 public KeyEventArgs() { }
                 public KeyEventArgs(ButtonFlags buttons) { Buttons = buttons; }
             }
@@ -226,6 +224,7 @@ namespace XInput.Wrapper
                 public readonly ButtonFlags Mask;
                 public readonly string Name = string.Empty;
                 public bool Supported { get; internal set; } // LATER fill in the flag based on the capabilities
+                public bool SendKeyDownEveryTick { get; set; };
 
                 public bool Pressed;
 
@@ -268,37 +267,30 @@ namespace XInput.Wrapper
                         Pressed = hasFlag && !Pressed;
                     } // if stateChanged
 
+                    if (Pressed &&
+                        SendKeyDownEveryTick &&
+                        lastAct != Went.Down &&
+                        KeyDown != null)
+                    {
+                        OnKeyDown();
+                    }
+
+                    // TODO >README first occur many Button.KeyDown|Up events and only after that occur one global event KeyDown|Up with buttons mask
+
                     return lastAct;
                 } // Update
 
-                public event EventHandler KeyDown;
-                protected virtual void __OnKeyDown(object o)
-                {
-                    EventHandler pceh = KeyDown;
-                    pceh?.Invoke(this, EventArgs.Empty);
-                }
+                public event EventHandler<KeyEventArgs> KeyDown;
+                public event EventHandler<KeyEventArgs> KeyUp;
 
                 public void OnKeyDown()
                 {
-                    if (uiContext != null)
-                        uiContext.Post(__OnKeyDown, this);
-                    else
-                        __OnKeyDown(this);
-                }
-
-                public event EventHandler KeyUp;
-                protected virtual void __OnKeyUp(object o)
-                {
-                    EventHandler pceh = KeyUp;
-                    pceh?.Invoke(this, EventArgs.Empty);
+                    OnKeyEvent(KeyDown, Mask);
                 }
 
                 public void OnKeyUp()
                 {
-                    if (uiContext != null)
-                        uiContext.Post(__OnKeyUp, this);
-                    else
-                        __OnKeyUp(this);
+                    OnKeyEvent(KeyUp, Mask);
                 }
 
                 public readonly Dictionary<ButtonFlags, string> Names = new Dictionary<ButtonFlags, string>() {
@@ -317,7 +309,6 @@ namespace XInput.Wrapper
                     { ButtonFlags.X, "Button_X" },
                     { ButtonFlags.Y, "Button_Y" }
                 };
-
                 internal enum Went { None, Down, Up }
             } // class Button
 
@@ -340,7 +331,6 @@ namespace XInput.Wrapper
                 X = 0x4000,
                 Y = 0x8000,
             };
-
 
             // LATER For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
@@ -365,9 +355,7 @@ namespace XInput.Wrapper
                             0x00000001, // always GAMEPAD_FLAG,
                             ref caps) == 0;
                 }
-
                 public SubType PadType { get { return (SubType)caps.SubType; } }
-
                 public bool IsWireless { get { return ((Flags)caps.Flags).HasFlag(Flags.Wireless); } }
                 public bool IsForceFeedback { get { return ((Flags)caps.Flags).HasFlag(Flags.ForceFeedback); } }
                 public bool IsVoiceSupport { get { return ((Flags)caps.Flags).HasFlag(Flags.VoiceSupport); } }
@@ -377,13 +365,13 @@ namespace XInput.Wrapper
                 [Flags]
                 public enum Flags : ushort
                 {
-                    VoiceSupport  = 0x0004,
+                    VoiceSupport = 0x0004,
 
                     //Windows 8 or higher only
                     ForceFeedback = 0x0001,   // Device supports force feedback functionality.
-                    Wireless      = 0x0002,
+                    Wireless = 0x0002,
                     PMD_Supported = 0x0008,   // Device supports plug-in modules.
-                    NoNavigation  = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
+                    NoNavigation = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
                 };
 
                 public enum SubType : byte
@@ -408,7 +396,7 @@ namespace XInput.Wrapper
                 Native.XINPUT_BATTERY_INFORMATION state;
 
                 public readonly At Location;
-                public SourceType Type { get { return (SourceType)state.BatteryType; }}
+                public SourceType Type { get { return (SourceType)state.BatteryType; } }
                 public ChargeLevel Level { get { return (ChargeLevel)state.BatteryLevel; } }
 
                 internal Battery(uint userIndex, At at)
@@ -421,27 +409,28 @@ namespace XInput.Wrapper
                 /// Update battery state
                 /// </summary>
                 /// <returns>TRUE - if updated successfully</returns>
-                public bool Update() {
+                public bool Update()
+                {
                     return Native.XInputGetBatteryInformation(uindex, (byte)Location, ref state) == 0;
                 }
 
                 public enum SourceType : byte
                 {
-                    Disconnected    = 0x00,
-                    WiredNoBattery  = 0x01,
-                    Alkaline        = 0x02,
-                    NiMh            = 0x03,
-                    Unknown         = 0xFF, 
+                    Disconnected = 0x00,
+                    WiredNoBattery = 0x01,
+                    Alkaline = 0x02,
+                    NiMh = 0x03,
+                    Unknown = 0xFF,
                 };
 
                 // These are only valid for wireless, connected devices, with known battery types
                 // The amount of use time remaining depends on the type of device.
                 public enum ChargeLevel : byte
                 {
-                    Empty   = 0x00,
-                    Low     = 0x01,
-                    Medium  = 0x02,
-                    Full    = 0x03
+                    Empty = 0x00,
+                    Low = 0x01,
+                    Medium = 0x02,
+                    Full = 0x03
                 };
 
                 public enum At : byte
@@ -475,7 +464,6 @@ namespace XInput.Wrapper
                 uint dwFlags,
                 ref XINPUT_CAPABILITIES pCapabilities
             );
-
 
             [DllImport("xinput1_4.dll")]
             public static extern uint XInputGetBatteryInformation
