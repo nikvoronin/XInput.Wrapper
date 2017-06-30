@@ -28,7 +28,7 @@ Test of availability of XInput 1.4 (xinput1_4.dll). Should not call often! This 
 ```c#
 if (X.IsAvailable)
 {
-	...
+    [...]
 ```
 
 > For performance reasons, don't call XInputGetState for an 'empty' user slot every frame. We recommend that you space out checks for new controllers every few seconds instead.<br/>
@@ -40,8 +40,8 @@ Got Gamepad of the first user
 ```c#
 if (X.IsAvailable)
 {
-	gamepad = X.Gamepad_1;
-	...
+    gamepad = X.Gamepad_1;
+    [...]
 ```
 
 
@@ -50,15 +50,15 @@ Check gamepad's capabilites and test ForceFeedBack support
 ```c#
 if (X.IsAvailable)
 {
-	gamepad = X.Gamepad_1;
-	X.Gamepad.Capability caps = gamepad.Capabilities;
+    gamepad = X.Gamepad_1;
+    X.Gamepad.Capability caps = gamepad.Capabilities;
 
-	if (gamepad.FFB_Supported)
-	{
-		// can play with ~~vibrations~~ FFB
-	}
+    if (gamepad.FFB_Supported)
+    {
+        // can play with ~~vibrations~~ FFB
+    }
 
-	...
+    [...]
 ```
 
 
@@ -67,15 +67,15 @@ You can subscribe on events then start polling thread. X.StartPolling() supports
 ```c#
 if (X.IsAvailable)
 {
-	gamepad = X.Gamepad_1;
+    gamepad = X.Gamepad_1;
 
-	...
-	
+    ...
+    
     gamepad.KeyDown           += Gamepad_KeyDown;
-	gamepad.StateChanged      += Gamepad_StateChanged;
-	gamepad.ConnectionChanged += Gamepad_ConnectionChanged;
+    gamepad.StateChanged      += Gamepad_StateChanged;
+    gamepad.ConnectionChanged += Gamepad_ConnectionChanged;
 
-	X.StartPolling(gamepad);
+    X.StartPolling(gamepad);
 }
 ```
 
@@ -85,10 +85,10 @@ Do not forget to stop polling
 ```c#
 private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
 {
-	if (gamepad != null)
-		X.StopPolling();
-		
-	...
+    if (gamepad != null)
+        X.StopPolling();
+        
+    [...]
 ```
 
 
@@ -118,23 +118,23 @@ If you are playing with an event driven application (such as WinForms, WPF, etc)
 ```c#
 while (true)
 {
-	ProcessInput();
-	Update();
-	Render();
+    ProcessInput();
+    Update();
+    Render();
 }
 
 ...
 
 void ProcessInput()
 {
-	if (gamepad == null)
-		return;
+    if (gamepad == null)
+        return;
 
-	if (gamepad.Update())
-	{
-		// something happened: button pressed, stick turned or trigger was triggered
-	}
-	...
+    if (gamepad.Update())
+    {
+        // something happened: button pressed, stick turned or trigger was triggered
+    }
+    [...]
 ```
 
 
@@ -143,30 +143,30 @@ If Update() returns TRUE you should check connection state, state of buttons, st
 ```c#
 if (gamepad.Update())
 {
-	// Check connection status and if connected then check battery state
-	if (gamepad.IsConnected)
-		gamepad.UpdateBattery();
+    // Check connection status and if connected then check battery state
+    if (gamepad.IsConnected)
+        gamepad.UpdateBattery();
 
-	// KeyUp is an event that happens once
-	// Try to stop vibrations
-	if (gamepad.X_up)
-		gamepad.FFB_Stop();
+    // KeyUp is an event that happens once
+    // Try to stop vibrations
+    if (gamepad.X_up)
+        gamepad.FFB_Stop();
 
-	// You can process here but this will called once
-	if (gamepad.A_down)
-		gamepad.FFB_Vibrate(1, .5f, 100);
+    // You can process here but this will called once
+    if (gamepad.A_down)
+        gamepad.FFB_Vibrate(1, .5f, 100);
 
-	// Processing of analog inputs
-	...
+    // Processing of analog inputs
+    [...]
 }
 
 // Will called again and again and again while button is pressed
 if (gamepad.Buttons != 0)
 {
-	if (gamepad.X_down)
-		gamepad.FFB_Vibrate(.2f, .5f, 100);
-	
-	...
+    if (gamepad.X_down)
+        gamepad.FFB_Vibrate(.2f, .5f, 100);
+    
+    [...]
 }
 ```
 
@@ -176,11 +176,11 @@ if (gamepad.Buttons != 0)
 There are two kinds of analog methods: absolute and normalized. Normalized are with the _N postfix. Absolute methods returns X.Point {int X, int Y} objects, normalized returns X.PointF {float X, float Y}.
 
 ```
-     0    <= LTrigger.X   <=   255		// absolute
-     0.0f <= LTrigger_N.X <=     1.0f	// normalized
+     0    <= LTrigger.X   <=   255        // absolute
+     0.0f <= LTrigger_N.X <=     1.0f    // normalized
 
--32767    <= LStick.X     <= 32767		// absolute
-    -1.0f <= LStick_N.X   <=     1.0f	// normalized
+-32767    <= LStick.X     <= 32767        // absolute
+    -1.0f <= LStick_N.X   <=     1.0f    // normalized
 
 ```
 
@@ -206,7 +206,7 @@ Check presence of FFB
 ```c#
 if (gamepad.FFB_Supported)
 {
-	// Already here
+    // Already here
 }
 ```
 
@@ -217,7 +217,7 @@ X.Gamepad.Capability caps = gamepad.Capabilities;
 
 if ((caps.Flags & X.Gamepad.CapabilityFlags.FFB_Supported) == X.Gamepad.CapabilityFlags.FFB_Supported)
 {
-	// Already here
+    // Already here
 }
 ```
 
