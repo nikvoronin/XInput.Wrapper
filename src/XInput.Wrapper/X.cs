@@ -72,9 +72,9 @@ namespace XInput.Wrapper
                 GamepadBattery = new Battery(index, Battery.At.Gamepad);
                 HeadsetBattery = new Battery(index, Battery.At.Headset);
 
+                // UNDONE others buttons
                 A = new Button(ButtonFlags.A);
-
-                // LATER Add only supported buttons based on capabilities
+                // LATER Add supported buttons only. should based on capabilities
                 Buttons.Add(A);
             }
 
@@ -116,9 +116,7 @@ namespace XInput.Wrapper
                         OnStateChanged();
                 }
 
-                // STUB
-                // make list of buttons and axis
-                // and update it
+                // UNDONE  make list of axises  and update it
                 if (isConnected && isChanged)
                 {
                     ButtonsState = (ButtonFlags)state.Gamepad.wButtons;
@@ -169,64 +167,49 @@ namespace XInput.Wrapper
 
 
             public event EventHandler ConnectionChanged;
-            void Internal_OnConnectionChanged()
+            public event EventHandler StateChanged;
+
+            public void OnStateChanged()
             {
-                EventHandler pceh = ConnectionChanged;
-                pceh?.Invoke(this, EventArgs.Empty);
+                OnEvent(StateChanged);
             }
 
             public void OnConnectionChanged()
             {
-                if (uiContext != null)
-                    uiContext.Post((o) => Internal_OnConnectionChanged(), null);
-                else
-                    Internal_OnConnectionChanged();
+                OnEvent(ConnectionChanged);
             }
 
-            public event EventHandler StateChanged;
-            void Internal_OnStateChanged()
+            private void OnEvent(EventHandler handler)
             {
-                EventHandler pceh = StateChanged;
-                pceh?.Invoke(this, EventArgs.Empty);
-            }
+                EventHandler pceh = handler;
 
-            public void OnStateChanged()
-            {
                 if (uiContext != null)
-                    uiContext.Post((o) => Internal_OnStateChanged(), null);
+                    uiContext.Post((o) => { pceh?.Invoke(this, EventArgs.Empty); }, null);
                 else
-                    Internal_OnStateChanged();
+                    pceh?.Invoke(this, EventArgs.Empty);
             }
 
             public event EventHandler<KeyEventArgs> KeyDown;
-            void Internal_OnKeyDown(ButtonFlags buttons)
-            {
-                EventHandler<KeyEventArgs> pceh = KeyDown;
-                pceh?.Invoke(this, new KeyEventArgs(buttons));
-            }
+            public event EventHandler<KeyEventArgs> KeyUp;
 
             public void OnKeyDown(ButtonFlags buttons)
             {
-                if (uiContext != null)
-                    uiContext.Post((o) => { Internal_OnKeyDown(buttons); }, null);
-                else
-                    Internal_OnKeyDown(buttons);
-            }
-
-            // LATER all this methods call similar methods, shall I make template?
-            public event EventHandler<KeyEventArgs> KeyUp;
-            void Internal_OnKeyUp(ButtonFlags buttons)
-            {
-                EventHandler<KeyEventArgs> pceh = KeyUp;
-                pceh?.Invoke(this, new KeyEventArgs(buttons));
+                OnKeyEvent(KeyDown, buttons);
             }
 
             public void OnKeyUp(ButtonFlags buttons)
             {
+                OnKeyEvent(KeyUp, buttons);
+            }
+
+            private void OnKeyEvent(EventHandler<KeyEventArgs> handler, ButtonFlags buttons)
+            {
+                EventHandler<KeyEventArgs> pceh = handler;
+
                 if (uiContext != null)
-                    uiContext.Post((o) => { Internal_OnKeyUp(buttons); }, null);
+                    uiContext.Post((o) => { pceh?.Invoke(this, new KeyEventArgs(buttons)); }, null);
                 else
-                    Internal_OnKeyUp(buttons);
+                    pceh?.Invoke(this, new KeyEventArgs(buttons)); ;
             }
 
             public class KeyEventArgs : EventArgs
