@@ -50,7 +50,7 @@ namespace XInput.Wrapper
             }
         }
 
-        public class Gamepad
+        public sealed class Gamepad
         {
             public readonly uint Index;
 
@@ -62,7 +62,9 @@ namespace XInput.Wrapper
             uint packetNumber = 0;
             public uint PacketNumber { get { return state.dwPacketNumber; } }
 
-            Button A;
+            public Button A;
+            public ButtonFlags ButtonsState = ButtonFlags.None;
+            internal List<Button> Buttons = new List<Button>();
 
             internal Gamepad(uint index)
             {
@@ -70,7 +72,10 @@ namespace XInput.Wrapper
                 GamepadBattery = new Battery(index, Battery.At.Gamepad);
                 HeadsetBattery = new Battery(index, Battery.At.Headset);
 
-                A = new Button(Button.Flag.A, false);
+                A = new Button(ButtonFlags.A);
+
+                // LATER Add only supported buttons based on capabilities
+                Buttons.Add(A);
             }
 
             bool isConnected;
@@ -88,8 +93,7 @@ namespace XInput.Wrapper
 
                 //lastButtonsState = state.Current.Buttons;
                 uint lastPacketNumber = state.dwPacketNumber;
-                uint result =
-                    Native.XInputGetState(Index, ref state);
+                uint result = Native.XInputGetState(Index, ref state);
 
                 packetNumber = state.dwPacketNumber;
 
@@ -117,7 +121,26 @@ namespace XInput.Wrapper
                 // and update it
                 if (isConnected && isChanged)
                 {
-                    A.Update(ref state);
+                    ButtonsState = (ButtonFlags)state.Gamepad.wButtons;
+
+                    ButtonFlags downButtons = ButtonFlags.None;
+                    ButtonFlags upButtons = ButtonFlags.None;
+
+                    foreach(Button tt in Buttons)
+                    {
+                        Button.Went wh = tt.Update(ref state);
+                        if (wh == Button.Went.Down)
+                            downButtons |= tt.Mask;
+                        else
+                            if (wh == Button.Went.Up)
+                                upButtons |= tt.Mask;
+                    }
+
+                    if (downButtons != ButtonFlags.None)
+                        OnKeyDown(downButtons);
+
+                    if (upButtons != ButtonFlags.None)
+                        OnKeyUp(upButtons);
                 }
 
                 // UNDONE KeyDown should send regular 
@@ -142,12 +165,11 @@ namespace XInput.Wrapper
                 return isChanged;
             } // Update()
 
-
             #region // Events ////////////////////////////////////////////////////////////////////
 
 
             public event EventHandler ConnectionChanged;
-            protected virtual void __OnConnectionChanged(object o)
+            void Internal_OnConnectionChanged()
             {
                 EventHandler pceh = ConnectionChanged;
                 pceh?.Invoke(this, EventArgs.Empty);
@@ -156,13 +178,13 @@ namespace XInput.Wrapper
             public void OnConnectionChanged()
             {
                 if (uiContext != null)
-                    uiContext.Post(__OnConnectionChanged, null);
+                    uiContext.Post((o) => Internal_OnConnectionChanged(), null);
                 else
-                    __OnConnectionChanged(null);
+                    Internal_OnConnectionChanged();
             }
 
             public event EventHandler StateChanged;
-            protected virtual void __OnStateChanged(object o)
+            void Internal_OnStateChanged()
             {
                 EventHandler pceh = StateChanged;
                 pceh?.Invoke(this, EventArgs.Empty);
@@ -171,25 +193,65 @@ namespace XInput.Wrapper
             public void OnStateChanged()
             {
                 if (uiContext != null)
-                    uiContext.Post(__OnStateChanged, null);
+                    uiContext.Post((o) => Internal_OnStateChanged(), null);
                 else
-                    __OnStateChanged(null);
+                    Internal_OnStateChanged();
+            }
+
+            public event EventHandler<KeyEventArgs> KeyDown;
+            void Internal_OnKeyDown(ButtonFlags buttons)
+            {
+                EventHandler<KeyEventArgs> pceh = KeyDown;
+                pceh?.Invoke(this, new KeyEventArgs(buttons));
+            }
+
+            public void OnKeyDown(ButtonFlags buttons)
+            {
+                if (uiContext != null)
+                    uiContext.Post((o) => { Internal_OnKeyDown(buttons); }, null);
+                else
+                    Internal_OnKeyDown(buttons);
+            }
+
+            // LATER all this methods call similar methods, shall I make template?
+            public event EventHandler<KeyEventArgs> KeyUp;
+            void Internal_OnKeyUp(ButtonFlags buttons)
+            {
+                EventHandler<KeyEventArgs> pceh = KeyUp;
+                pceh?.Invoke(this, new KeyEventArgs(buttons));
+            }
+
+            public void OnKeyUp(ButtonFlags buttons)
+            {
+                if (uiContext != null)
+                    uiContext.Post((o) => { Internal_OnKeyUp(buttons); }, null);
+                else
+                    Internal_OnKeyUp(buttons);
+            }
+
+            public class KeyEventArgs : EventArgs
+            {
+                public ButtonFlags Buttons = ButtonFlags.None;
+
+                public KeyEventArgs() { }
+                public KeyEventArgs(ButtonFlags buttons) { Buttons = buttons; }
             }
             #endregion
 
             public class Button
             {
-                public readonly Flag Id;
+                public readonly ButtonFlags Mask;
                 public readonly string Name = string.Empty;
+                public bool Supported { get; internal set; } // LATER fill in the flag based on the capabilities
 
                 public bool Pressed;
 
-                internal Button(Flag id, bool isAnalog)
+                internal Button(ButtonFlags mask)
                 {
-                    Id = id;
+                    Mask = mask;
 
-                    if (Names.ContainsKey(id))
-                        Name = Names[id];
+                    if (Names.ContainsKey(mask))
+                        Name = Names[mask];
                 }
 
                 /// <summary>
@@ -197,25 +259,34 @@ namespace XInput.Wrapper
                 /// </summary>
                 /// <param name="state">Gamepad global state</param>
                 /// <returns>TRUE - button state was changed</returns>
-                internal bool Update(ref Native.XINPUT_STATE state)
+                internal Went Update(ref Native.XINPUT_STATE state)
                 {
-                    bool hasFlag = ((Flag)state.Gamepad.wButtons).HasFlag(Id);
+                    bool hasFlag = ((ButtonFlags)state.Gamepad.wButtons).HasFlag(Mask);
                     bool stateChanged = hasFlag != Pressed;
+                    Went lastAct = Went.None;
 
                     if (stateChanged)
                     {
-                        // Do not call anything if we don't have any subscribers
+                        // Do not call if we don't have any subscribers
                         if ((KeyDown != null) && hasFlag && !Pressed)
+                        {
                             OnKeyDown();
+                            lastAct = Went.Down;
+                        }
                         else
+                        {
                             if ((KeyUp != null) && Pressed && !hasFlag)
+                            {
                                 OnKeyUp();
+                                lastAct = Went.Down;
+                            }
+                        }
 
                         Pressed = hasFlag && !Pressed;
-                    }
+                    } // if stateChanged
 
-                    return stateChanged;
-                }
+                    return lastAct;
+                } // Update
 
                 public event EventHandler KeyDown;
                 protected virtual void __OnKeyDown(object o)
@@ -247,42 +318,46 @@ namespace XInput.Wrapper
                         __OnKeyUp(this);
                 }
 
-                [Flags]
-                public enum Flag : uint
-                {
-                    Up = 0x0001,
-                    Down = 0x0002,
-                    Left = 0x0004,
-                    Right = 0x0008,
-                    Start = 0x0010,
-                    Back = 0x0020,
-                    LStick = 0x0040,
-                    RStick = 0x0080,
-                    LBumper = 0x0100,
-                    RBumper = 0x0200,
-                    A = 0x1000,
-                    B = 0x2000,
-                    X = 0x4000,
-                    Y = 0x8000,
+                public readonly Dictionary<ButtonFlags, string> Names = new Dictionary<ButtonFlags, string>() {
+                    { ButtonFlags.Up, "Dpad_Up" },
+                    { ButtonFlags.Down, "Dpad_Down" },
+                    { ButtonFlags.Left, "Dpad_Left" },
+                    { ButtonFlags.Right, "Dpad_Right" },
+                    { ButtonFlags.Start, "Start" },
+                    { ButtonFlags.Back, "Back" },
+                    { ButtonFlags.LStick, "Left_Stick" },
+                    { ButtonFlags.RStick, "Right_Stick" },
+                    { ButtonFlags.LBumper, "Left_Bumper" },
+                    { ButtonFlags.RBumper, "Right_Bumper" },
+                    { ButtonFlags.A, "Button_A" },
+                    { ButtonFlags.B, "Button_B" },
+                    { ButtonFlags.X, "Button_X" },
+                    { ButtonFlags.Y, "Button_Y" }
                 };
 
-                public readonly Dictionary<Flag, string> Names = new Dictionary<Flag, string>() {
-                    { Flag.Up, "Dpad_Up" },
-                    { Flag.Down, "Dpad_Down" },
-                    { Flag.Left, "Dpad_Left" },
-                    { Flag.Right, "Dpad_Right" },
-                    { Flag.Start, "Start" },
-                    { Flag.Back, "Back" },
-                    { Flag.LStick, "Left_Stick" },
-                    { Flag.RStick, "Right_Stick" },
-                    { Flag.LBumper, "Left_Bumper" },
-                    { Flag.RBumper, "Right_Bumper" },
-                    { Flag.A, "Button_A" },
-                    { Flag.B, "Button_B" },
-                    { Flag.X, "Button_X" },
-                    { Flag.Y, "Button_Y" }
-                };
-            }
+                internal enum Went { None, Down, Up }
+            } // class Button
+
+            [Flags]
+            public enum ButtonFlags : uint
+            {
+                None = 0x0000,
+                Up = 0x0001,
+                Down = 0x0002,
+                Left = 0x0004,
+                Right = 0x0008,
+                Start = 0x0010,
+                Back = 0x0020,
+                LStick = 0x0040,
+                RStick = 0x0080,
+                LBumper = 0x0100,
+                RBumper = 0x0200,
+                A = 0x1000,
+                B = 0x2000,
+                X = 0x4000,
+                Y = 0x8000,
+            };
+
 
             // LATER For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
@@ -310,14 +385,14 @@ namespace XInput.Wrapper
 
                 public SubType PadType { get { return (SubType)caps.SubType; } }
 
-                public bool IsWireless { get { return ((Flag)caps.Flags).HasFlag(Flag.Wireless); } }
-                public bool IsForceFeedback { get { return ((Flag)caps.Flags).HasFlag(Flag.ForceFeedback); } }
-                public bool IsVoiceSupport { get { return ((Flag)caps.Flags).HasFlag(Flag.VoiceSupport); } }
-                public bool IsNoNavigation { get { return ((Flag)caps.Flags).HasFlag(Flag.NoNavigation); } }
-                public bool IsPluginModules { get { return ((Flag)caps.Flags).HasFlag(Flag.PMD_Supported); } }
+                public bool IsWireless { get { return ((Flags)caps.Flags).HasFlag(Flags.Wireless); } }
+                public bool IsForceFeedback { get { return ((Flags)caps.Flags).HasFlag(Flags.ForceFeedback); } }
+                public bool IsVoiceSupport { get { return ((Flags)caps.Flags).HasFlag(Flags.VoiceSupport); } }
+                public bool IsNoNavigation { get { return ((Flags)caps.Flags).HasFlag(Flags.NoNavigation); } }
+                public bool IsPluginModules { get { return ((Flags)caps.Flags).HasFlag(Flags.PMD_Supported); } }
 
                 [Flags]
-                public enum Flag : ushort
+                public enum Flags : ushort
                 {
                     VoiceSupport  = 0x0004,
 
