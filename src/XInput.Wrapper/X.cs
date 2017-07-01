@@ -1,4 +1,4 @@
-// XInput.Wrapper by Nikolai Voronin
+﻿// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
 // Version 0.4 (July 1, 2017)
 // Under the MIT License (MIT)
@@ -53,6 +53,33 @@ namespace XInput.Wrapper
             }
         } // IsAvailable
 
+        private static void OnEvent(object sender, EventHandler handler)
+        {
+            EventHandler pceh = handler;
+
+            if (uiContext != null)
+                uiContext.Post((o) => pceh?.Invoke(sender, EventArgs.Empty), null);
+            else
+                pceh?.Invoke(sender, EventArgs.Empty);
+        }
+
+        private static void OnKeyEvent(object sender, EventHandler<KeyEventArgs> handler, Gamepad.ButtonFlags buttons)
+        {
+            EventHandler<KeyEventArgs> pceh = handler;
+
+            if (uiContext != null)
+                uiContext.Post((o) => pceh?.Invoke(sender, new KeyEventArgs(buttons)), null);
+            else
+                pceh?.Invoke(sender, new KeyEventArgs(buttons)); ;
+        }
+
+        public class KeyEventArgs : EventArgs
+        {
+            public Gamepad.ButtonFlags Buttons = Gamepad.ButtonFlags.None;
+            public KeyEventArgs() { }
+            public KeyEventArgs(Gamepad.ButtonFlags buttons) { Buttons = buttons; }
+        }
+
         public sealed class Gamepad
         {
             public readonly uint Index;
@@ -78,7 +105,7 @@ namespace XInput.Wrapper
 
                 // UNDONE other buttons
                 A = new Button(ButtonFlags.A);
-                // LATER Add supported buttons only. should based on capabilities
+                // TODO >README Add supported buttons only. should based on capabilities
                 Buttons.Add(A);
             }
 
@@ -120,30 +147,34 @@ namespace XInput.Wrapper
                 }
 
                 // UNDONE  make list of axises  and update it
-                if (isConnected && isChanged)
+                if (isConnected)
                 {
                     ButtonsState = (ButtonFlags)state.Gamepad.wButtons;
 
                     ButtonFlags downButtons = ButtonFlags.None;
                     ButtonFlags upButtons = ButtonFlags.None;
 
-                    foreach (Button tt in Buttons)
+                    foreach (Button b in Buttons)
                     {
-                        Button.Went wh = tt.Update(ref state);
+                        Button.Went wh = b.Update(ref state);
 
-                        if (wh == Button.Went.Down)
-                            downButtons |= tt.Mask;
-                        else
+                        if (wh == Button.Went.Down ||
+                            (SendKeyDownEveryTick && b.Pressed))
+                        {
+                            downButtons |= b.Mask;
+                        }
+                        else {
                             if (wh == Button.Went.Up)
-                            upButtons |= tt.Mask;
-                    }
+                                upButtons |= b.Mask;
+                        } // else
+                    } // foreach
 
                     if (downButtons != ButtonFlags.None)
                         OnKeyDown(downButtons);
 
                     if (upButtons != ButtonFlags.None)
                         OnKeyUp(upButtons);
-                }
+                } // if isConnected
 
                 // UNDONE Force feedback
                 //DateTime now = DateTime.UtcNow;
@@ -167,63 +198,36 @@ namespace XInput.Wrapper
 
             public event EventHandler ConnectionChanged;
             public event EventHandler StateChanged;
+            public event EventHandler<KeyEventArgs> KeyDown;
+            public event EventHandler<KeyEventArgs> KeyUp;
 
             public void OnStateChanged()
             {
-                OnEvent(StateChanged);
+                OnEvent(this, StateChanged);
             }
 
             public void OnConnectionChanged()
             {
-                OnEvent(ConnectionChanged);
+                OnEvent(this, ConnectionChanged);
             }
-
-            private void OnEvent(EventHandler handler)
-            {
-                EventHandler pceh = handler;
-
-                if (uiContext != null)
-                	uiContext.Post((o) => pceh?.Invoke(this, EventArgs.Empty), null);
-                else
-                    pceh?.Invoke(this, EventArgs.Empty);
-            }
-
-            public event EventHandler<KeyEventArgs> KeyDown;
-            public event EventHandler<KeyEventArgs> KeyUp;
 
             public void OnKeyDown(ButtonFlags buttons)
             {
-                OnKeyEvent(KeyDown, buttons);
+                OnKeyEvent(this, KeyDown, buttons);
             }
 
             public void OnKeyUp(ButtonFlags buttons)
             {
-                OnKeyEvent(KeyUp, buttons);
+                OnKeyEvent(this, KeyUp, buttons);
             }
 
-            private void OnKeyEvent(EventHandler<KeyEventArgs> handler, ButtonFlags buttons)
-            {
-                EventHandler<KeyEventArgs> pceh = handler;
-
-                if (uiContext != null)
-                    uiContext.Post((o) => pceh?.Invoke(this, new KeyEventArgs(buttons)), null);
-                else
-                    pceh?.Invoke(this, new KeyEventArgs(buttons)); ;
-            }
-
-            public class KeyEventArgs : EventArgs
-            {
-                public ButtonFlags Buttons = ButtonFlags.None;
-                public KeyEventArgs() { }
-                public KeyEventArgs(ButtonFlags buttons) { Buttons = buttons; }
-            }
             #endregion
 
             public class Button
             {
                 public readonly ButtonFlags Mask;
                 public readonly string Name = string.Empty;
-                public bool Supported { get; internal set; } // LATER fill in the flag based on the capabilities
+                public bool Supported { get; internal set; } // TODO fill in the flag based on the capabilities
                 public bool SendKeyDownEveryTick { get; set; }
 
                 public bool Pressed;
@@ -285,12 +289,12 @@ namespace XInput.Wrapper
 
                 public void OnKeyDown()
                 {
-                    OnKeyEvent(KeyDown, Mask);
+                    OnKeyEvent(this, KeyDown, Mask);
                 }
 
                 public void OnKeyUp()
                 {
-                    OnKeyEvent(KeyUp, Mask);
+                    OnKeyEvent(this, KeyUp, Mask);
                 }
 
                 public readonly Dictionary<ButtonFlags, string> Names = new Dictionary<ButtonFlags, string>() {
@@ -332,7 +336,7 @@ namespace XInput.Wrapper
                 Y = 0x8000,
             };
 
-            // LATER For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
+            // TODO For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
             {
                 uint uindex;
