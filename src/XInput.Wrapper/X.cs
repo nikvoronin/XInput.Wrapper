@@ -1,6 +1,6 @@
 // XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.4 (June 30, 2017)
+// Version 0.4 (July 1, 2017)
 // Under the MIT License (MIT)
 //
 // Stick = Thumb
@@ -51,7 +51,7 @@ namespace XInput.Wrapper
 
                 return isAvailable;
             }
-        }
+        } // IsAvailable
 
         public sealed class Gamepad
         {
@@ -76,7 +76,7 @@ namespace XInput.Wrapper
                 GamepadBattery = new Battery(index, Battery.At.Gamepad);
                 HeadsetBattery = new Battery(index, Battery.At.Headset);
 
-                // UNDONE others buttons
+                // UNDONE other buttons
                 A = new Button(ButtonFlags.A);
                 // LATER Add supported buttons only. should based on capabilities
                 Buttons.Add(A);
@@ -84,7 +84,7 @@ namespace XInput.Wrapper
 
             bool isConnected;
             public bool IsConnected { get { return isConnected; } }
-            public bool Enable { set { Native.XInputEnable(value); } }
+            public static bool Enable { set { Native.XInputEnable(value); } }
 
             /// <summary>
             /// Update gamepad data
@@ -183,7 +183,7 @@ namespace XInput.Wrapper
                 EventHandler pceh = handler;
 
                 if (uiContext != null)
-                    uiContext.Post((o) => { pceh?.Invoke(this, EventArgs.Empty); }, null);
+                	uiContext.Post((o) => pceh?.Invoke(this, EventArgs.Empty), null);
                 else
                     pceh?.Invoke(this, EventArgs.Empty);
             }
@@ -206,7 +206,7 @@ namespace XInput.Wrapper
                 EventHandler<KeyEventArgs> pceh = handler;
 
                 if (uiContext != null)
-                    uiContext.Post((o) => { pceh?.Invoke(this, new KeyEventArgs(buttons)); }, null);
+                    uiContext.Post((o) => pceh?.Invoke(this, new KeyEventArgs(buttons)), null);
                 else
                     pceh?.Invoke(this, new KeyEventArgs(buttons)); ;
             }
@@ -224,7 +224,7 @@ namespace XInput.Wrapper
                 public readonly ButtonFlags Mask;
                 public readonly string Name = string.Empty;
                 public bool Supported { get; internal set; } // LATER fill in the flag based on the capabilities
-                public bool SendKeyDownEveryTick { get; set; };
+                public bool SendKeyDownEveryTick { get; set; }
 
                 public bool Pressed;
 
@@ -392,7 +392,7 @@ namespace XInput.Wrapper
 
             public class Battery
             {
-                uint uindex;
+                readonly uint uindex;
                 Native.XINPUT_BATTERY_INFORMATION state;
 
                 public readonly At Location;
@@ -441,7 +441,7 @@ namespace XInput.Wrapper
             } // class Battery
         } // class Gamepad
 
-        public class Native
+        public static class Native
         {
             [DllImport("xinput1_4.dll")]
             public static extern uint XInputGetState
@@ -497,7 +497,6 @@ namespace XInput.Wrapper
                 ref uint pCaptureCount
             );
 
-            // ex StatePacket
             [StructLayout(LayoutKind.Explicit)]
             public struct XINPUT_STATE
             {
@@ -508,7 +507,6 @@ namespace XInput.Wrapper
                 public XINPUT_GAMEPAD Gamepad;
             }
 
-            // ex PadState
             [StructLayout(LayoutKind.Explicit)]
             public struct XINPUT_GAMEPAD
             {
@@ -541,7 +539,6 @@ namespace XInput.Wrapper
                 public short sThumbRY;
             }
 
-            // ex VibrationSpeed
             [StructLayout(LayoutKind.Sequential)]
             public struct XINPUT_VIBRATION
             {
@@ -552,7 +549,6 @@ namespace XInput.Wrapper
                 public ushort wRightMotorSpeed;
             }
 
-            // ex DeviceCapability
             [StructLayout(LayoutKind.Explicit)]
             public struct XINPUT_CAPABILITIES
             {
@@ -575,7 +571,6 @@ namespace XInput.Wrapper
                 public XINPUT_VIBRATION Vibration;
             }
 
-            // ex Battery.State
             [StructLayout(LayoutKind.Explicit)]
             public struct XINPUT_BATTERY_INFORMATION
             {
@@ -588,7 +583,6 @@ namespace XInput.Wrapper
                 public byte BatteryLevel;
             }
 
-            // ex Keystroke
             [StructLayout(LayoutKind.Explicit)]
             public struct XINPUT_KEYSTROKE
             {
@@ -611,7 +605,7 @@ namespace XInput.Wrapper
                 [MarshalAs(UnmanagedType.I1)]
                 [FieldOffset(6)]
                 public byte HidCode;
-            } // struct Keystroke
+            }
 
         } // class Native
 
