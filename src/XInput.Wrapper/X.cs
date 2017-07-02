@@ -1,6 +1,6 @@
 ﻿// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.4 (July 1, 2017)
+// Version 0.4 (July 2, 2017)
 // Under the MIT License (MIT)
 //
 // Stick = Thumb
@@ -95,7 +95,14 @@ namespace XInput.Wrapper
 
             public Button A;
             public ButtonFlags ButtonsState = ButtonFlags.None;
-            internal List<Button> Buttons = new List<Button>();
+            internal readonly List<Button> Buttons = new List<Button>();  // TODO checklist access if it became public
+            // TODO Buttons by number
+            //public readonly Dictionary<ushort, Button> ButtonsByNumber
+            //public Button GetButton(int buttonNo)
+            //{
+            //    Button b;
+            //    return b;
+            //}
 
             internal Gamepad(uint index)
             {
@@ -317,6 +324,28 @@ namespace XInput.Wrapper
                     { ButtonFlags.X, "Button_X" },
                     { ButtonFlags.Y, "Button_Y" }
                 };
+
+                public readonly Dictionary<ButtonFlags, ushort> Numbers = new Dictionary<ButtonFlags, ushort>() {
+                    { ButtonFlags.Up, 12 },
+                    { ButtonFlags.Down, 13 },
+                    { ButtonFlags.Left, 14 },
+                    { ButtonFlags.Right, 15 },
+                    { ButtonFlags.Start, 9 },
+                    { ButtonFlags.Back, 10 },
+                    { ButtonFlags.LStick, 7 },
+                    { ButtonFlags.RStick, 8 },
+                    { ButtonFlags.LThumb, 7 },
+                    { ButtonFlags.RThumb, 8 },
+                    { ButtonFlags.LBumper, 5 },
+                    { ButtonFlags.RBumper, 6 },
+                    { ButtonFlags.LTopShoulder, 5 },
+                    { ButtonFlags.RTopShoulder, 6 },
+                    { ButtonFlags.A, 1 },
+                    { ButtonFlags.B, 2 },
+                    { ButtonFlags.X, 3 },
+                    { ButtonFlags.Y, 4 }
+                };
+
                 internal enum Went { None, Down, Up }
             } // class Button
 
