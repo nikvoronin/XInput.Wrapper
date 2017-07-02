@@ -373,6 +373,36 @@ namespace XInput.Wrapper
                 Y = 0x8000,
             };
 
+            public class Axis
+            {
+                // Can be null if axis doesn't support pressing
+                public readonly Button Button = null;
+
+                public int X { get; }
+                public int Y { get; }
+
+                public uint DeadZoneRadius { get; set; }
+
+                public int MinX { get; }
+                public int MaxX { get; }
+                public int MinY { get; }
+                public int MaxY { get; }
+
+                // Normalized float X: 0.0f .. 1.0f, returns 0.0f when axis in a dead zone.
+                public float Xn { get; }
+                // Normalized float Y: 0.0f .. 1.0f, returns 0.0f when axis in a dead zone.
+                public float Yn { get; }
+
+                public float Magnitude { get { return (float)Math.Sqrt(Xn * Xn + Yn * Yn); } }
+                public float MagnitudeFast { get { return (float)(0.947543636291f * Math.Max(Xn, Yn) + 0.392485425092 * Math.Min(Xn, Yn)); } }
+
+                // UNDONE ctor
+
+            } // class Axis
+
+            // UNDONE Axises enum ?
+
+
             // TODO For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
             {
