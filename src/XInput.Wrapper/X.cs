@@ -394,7 +394,23 @@ namespace XInput.Wrapper
                 public float Yn { get; }
 
                 public float Magnitude { get { return (float)Math.Sqrt(Xn * Xn + Yn * Yn); } }
-                public float MagnitudeFast { get { return (float)(0.947543636291f * Math.Max(Xn, Yn) + 0.392485425092 * Math.Min(Xn, Yn)); } }
+
+                public float MagnitudeFast
+                {
+                    get
+                    {
+                        // Least square error w/ zero median  (Δmax=0.08158851)
+                        const float alpha = 0.948059f;
+                        const float beta = 0.392699f;
+
+                        float xa = Math.Abs(Xn);
+                        float ya = Math.Abs(Yn);
+                        if (xa > ya)
+                            return alpha * xa + beta * ya;
+                        else
+                            return alpha * ya + beta * xa;
+                    }
+                }
 
                 // UNDONE ctor
 
