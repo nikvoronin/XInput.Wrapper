@@ -95,7 +95,7 @@ namespace XInput.Wrapper
 
             public Button A;
             public ButtonFlags ButtonsState = ButtonFlags.None;
-            internal readonly List<Button> Buttons = new List<Button>();  // TODO checklist access if it became public
+            internal readonly List<Button> Buttons = new List<Button>();  // TODO check access to the list if it became public
             // TODO Buttons by number
             //public readonly Dictionary<ushort, Button> ButtonsByNumber
             //public Button GetButton(int buttonNo)
@@ -377,9 +377,6 @@ namespace XInput.Wrapper
             {
                 public readonly AxisFlags Mask;
                 public readonly string Name = string.Empty;
-
-                // Can be null if axis doesn't support pressing
-                public readonly Button Button = null;
 
                 public int X { get; }
                 public int Y { get; }
