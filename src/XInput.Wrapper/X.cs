@@ -1,6 +1,6 @@
 ﻿// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.4 (July 2, 2017)
+// Version 0.4 (July 6, 2017)
 // Under the MIT License (MIT)
 //
 // Stick = Thumb
@@ -375,6 +375,9 @@ namespace XInput.Wrapper
 
             public class Axis
             {
+                public readonly AxisFlags Mask;
+                public readonly string Name = string.Empty;
+
                 // Can be null if axis doesn't support pressing
                 public readonly Button Button = null;
 
@@ -412,12 +415,46 @@ namespace XInput.Wrapper
                     }
                 }
 
-                // UNDONE ctor
+                internal Axis(AxisFlags mask)
+                {
+                    Mask = mask;
 
+                    if (Names.ContainsKey(mask))
+                        Name = Names[mask];
+                }
+
+                // UNDONE Update
+                internal bool Update(Native.XINPUT_GAMEPAD gamepadState)
+                {
+
+                    // UNDONE call Button.Update
+                }
+
+                public readonly Dictionary<AxisFlags, string> Names = new Dictionary<AxisFlags, string>() {
+                    { AxisFlags.LStick, "Left_Stick" },
+                    { AxisFlags.RStick, "Right_Stick" },
+                    { AxisFlags.LThumb, "Left_Thumb" },
+                    { AxisFlags.RThumb, "Right_Thumb" },
+                    { AxisFlags.LTrigger, "Left_Trigger" },
+                    { AxisFlags.RTrigger, "Right_Trigger" },
+                    { AxisFlags.LBottomShoulder, "LeftBottom_Shoulder" },
+                    { AxisFlags.RBottomShoulder, "RightBottom_Shoulder" },
+                };
             } // class Axis
 
-            // UNDONE Axises enum ?
-
+            [Flags]
+            public enum AxisFlags : uint
+            {
+                None = 0x0000,
+                LStick = 0x0040,
+                RStick = 0x0080,
+                LThumb = 0x0040,
+                RThumb = 0x0080,
+                LTrigger = 0x0100,
+                RTrigger = 0x0200,
+                LBottomShoulder = 0x0100,
+                RBottomShoulder = 0x0200,
+            };
 
             // TODO For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
             public class Capability
