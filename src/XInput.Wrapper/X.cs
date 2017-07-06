@@ -393,12 +393,11 @@ namespace XInput.Wrapper
                 // Normalized float Y: 0.0f .. 1.0f, returns 0.0f when axis in a dead zone.
                 public float Yn { get; }
 
-                public float Magnitude { get { return (float)Math.Sqrt(Xn * Xn + Yn * Yn); } }
+                public float Magnitude => (float)Math.Sqrt(Xn * Xn + Yn * Yn);
 
                 public float MagnitudeFast
                 {
-                    get
-                    {
+                    get {
                         // Least square error w/ zero median  (Δmax=0.08158851)
                         const float alpha = 0.948059f;
                         const float beta = 0.392699f;
@@ -729,17 +728,5 @@ namespace XInput.Wrapper
             }
 
         } // class Native
-
-        public class Point
-        {
-            public int X { get; set; }
-            public int Y { get; set; }
-        } // class Point
-
-        public class PointF
-        {
-            public float X { get; set; }
-            public float Y { get; set; }
-        } // class Point
     } // class X
 }
