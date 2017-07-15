@@ -378,27 +378,28 @@ namespace XInput.Wrapper
                 public readonly AxisFlags Mask;
                 public readonly string Name = string.Empty;
 
-                public int X { get; }
-                public int Y { get; }
+                public short X { get; }
+                public short Y { get; }
 
                 public uint DeadZoneRadius { get; set; }
 
-                public int MinX { get; }
-                public int MaxX { get; }
-                public int MinY { get; }
-                public int MaxY { get; }
+                public readonly short MinX = short.MinValue;
+                public readonly short MaxX = short.MaxValue;
+                public readonly short MinY = short.MinValue;
+                public readonly short MaxY = short.MaxValue;
 
-                // Normalized float X: 0.0f .. 1.0f, returns 0.0f when axis in a dead zone.
+                // Normalized float X: 0.0f .. 1.0f, returns 0.0f when axis is in a dead zone.
                 public float Xn { get; }
-                // Normalized float Y: 0.0f .. 1.0f, returns 0.0f when axis in a dead zone.
+                // Normalized float Y: 0.0f .. 1.0f, returns 0.0f when axis is in a dead zone.
                 public float Yn { get; }
 
+                // Precise magnitude calculation
                 public float Magnitude => (float)Math.Sqrt(Xn * Xn + Yn * Yn);
 
+                // Fast and approximate: least square error w/ zero median  (Δmax=0.08158851)
                 public float MagnitudeFast
                 {
                     get {
-                        // Least square error w/ zero median  (Δmax=0.08158851)
                         const float alpha = 0.948059f;
                         const float beta = 0.392699f;
 
@@ -409,6 +410,19 @@ namespace XInput.Wrapper
                         else
                             return alpha * ya + beta * xa;
                     }
+                }
+
+                internal Axis(AxisFlags mask, short minX, short maxX, short minY, short maxY)
+                {
+                    Mask = mask;
+
+                    if (Names.ContainsKey(mask))
+                        Name = Names[mask];
+
+                    MinX = minX;
+                    MaxX = maxX;
+                    MinY = minY;
+                    MaxY = maxY;
                 }
 
                 internal Axis(AxisFlags mask)
@@ -422,8 +436,8 @@ namespace XInput.Wrapper
                 // UNDONE Update
                 internal bool Update(Native.XINPUT_GAMEPAD gamepadState)
                 {
-
-                    // UNDONE call Button.Update
+                    // STUB Update.return
+                    return false;
                 }
 
                 public readonly Dictionary<AxisFlags, string> Names = new Dictionary<AxisFlags, string>() {
