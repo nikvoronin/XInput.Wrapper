@@ -11,6 +11,15 @@
 - [Getting Started With XInput](https://msdn.microsoft.com/ru-ru/library/windows/desktop/ee417001(v=vs.85).aspx)
 - [Functions](https://msdn.microsoft.com/ru-ru/library/windows/desktop/ee417007(v=vs.85).aspx)
 
+# Class Structure
+
+X: threading, availability of the XInput_1.4 subsystem, polling loop
+- Gamepad
+	- Button: gamepad buttons like A, B, X, Y, LT, RT, ...
+	- Axis: sticks and triggers.
+	- Battery: suddenly, wireless gamepads and headsets includes batteries.
+- Native - interop to xinput1_4.dll
+
 # How to...
 
 ## Initialization
