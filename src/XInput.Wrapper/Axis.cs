@@ -76,14 +76,11 @@ namespace XInput.Wrapper
                 }
 
                 public readonly Dictionary<AxisFlags, string> Names = new Dictionary<AxisFlags, string>() {
-                    { AxisFlags.LStick, "Left_Stick" },
-                    { AxisFlags.RStick, "Right_Stick" },
-                    { AxisFlags.LThumb, "Left_Thumb" },
-                    { AxisFlags.RThumb, "Right_Thumb" },
-                    { AxisFlags.LTrigger, "Left_Trigger" },
-                    { AxisFlags.RTrigger, "Right_Trigger" },
-                    { AxisFlags.LBottomShoulder, "LeftBottom_Shoulder" },
-                    { AxisFlags.RBottomShoulder, "RightBottom_Shoulder" },
+                    { AxisFlags.None, "No_axis" },
+                    { AxisFlags.LStick, "Left_ThumbStick" },
+                    { AxisFlags.RStick, "Right_ThumbStick" },
+                    { AxisFlags.LTrigger, "LeftBottom_ShoulderTrigger" },
+                    { AxisFlags.RTrigger, "RightBottom_ShoulderTrigger" },
                 };
             } // class Axis
 

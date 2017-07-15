@@ -82,20 +82,17 @@ namespace XInput.Wrapper
                 }
 
                 public readonly Dictionary<ButtonFlags, string> Names = new Dictionary<ButtonFlags, string>() {
+                    { ButtonFlags.None, "No_Button" },
                     { ButtonFlags.Up, "Dpad_Up" },
                     { ButtonFlags.Down, "Dpad_Down" },
                     { ButtonFlags.Left, "Dpad_Left" },
                     { ButtonFlags.Right, "Dpad_Right" },
                     { ButtonFlags.Start, "Start" },
                     { ButtonFlags.Back, "Back" },
-                    { ButtonFlags.LStick, "Left_Stick" },
-                    { ButtonFlags.RStick, "Right_Stick" },
-                    { ButtonFlags.LThumb, "Left_Thumb" },
-                    { ButtonFlags.RThumb, "Right_Thumb" },
-                    { ButtonFlags.LBumper, "Left_Bumper" },
-                    { ButtonFlags.RBumper, "Right_Bumper" },
-                    { ButtonFlags.LTopShoulder, "LeftTop_Shoulder" },
-                    { ButtonFlags.RTopShoulder, "RightTop_Shoulder" },
+                    { ButtonFlags.LStick, "Left_ThumbStick" },
+                    { ButtonFlags.RStick, "Right_ThumbStick" },
+                    { ButtonFlags.LBumper, "LeftTop_ShoulderBumper" },
+                    { ButtonFlags.RBumper, "RightTop_ShoulderBumper" },
                     { ButtonFlags.A, "Button_A" },
                     { ButtonFlags.B, "Button_B" },
                     { ButtonFlags.X, "Button_X" },
@@ -103,6 +100,7 @@ namespace XInput.Wrapper
                 };
 
                 public readonly Dictionary<ButtonFlags, ushort> Numbers = new Dictionary<ButtonFlags, ushort>() {
+                    { ButtonFlags.None, 0 },
                     { ButtonFlags.Up, 12 },
                     { ButtonFlags.Down, 13 },
                     { ButtonFlags.Left, 14 },
@@ -111,12 +109,8 @@ namespace XInput.Wrapper
                     { ButtonFlags.Back, 10 },
                     { ButtonFlags.LStick, 7 },
                     { ButtonFlags.RStick, 8 },
-                    { ButtonFlags.LThumb, 7 },
-                    { ButtonFlags.RThumb, 8 },
                     { ButtonFlags.LBumper, 5 },
                     { ButtonFlags.RBumper, 6 },
-                    { ButtonFlags.LTopShoulder, 5 },
-                    { ButtonFlags.RTopShoulder, 6 },
                     { ButtonFlags.A, 1 },
                     { ButtonFlags.B, 2 },
                     { ButtonFlags.X, 3 },

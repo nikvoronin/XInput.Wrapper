@@ -65,7 +65,7 @@ namespace XInput.Wrapper
             if (uiContext != null)
                 uiContext.Post((o) => pceh?.Invoke(sender, new KeyEventArgs(buttons)), null);
             else
-                pceh?.Invoke(sender, new KeyEventArgs(buttons)); ;
+                pceh?.Invoke(sender, new KeyEventArgs(buttons));
         }
 
         public class KeyEventArgs : EventArgs
