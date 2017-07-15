@@ -7,7 +7,7 @@ namespace XInput.Wrapper
     {
         public sealed partial class Gamepad
         {
-            public readonly uint Index;
+            public readonly uint Index; // User or controller index, zero based 0..3
 
             public readonly Battery GamepadBattery;
             public readonly Battery HeadsetBattery;
@@ -20,7 +20,7 @@ namespace XInput.Wrapper
 
             public Button A;
             public ButtonFlags ButtonsState = ButtonFlags.None;
-            internal readonly List<Button> Buttons = new List<Button>();  // TODO check access to the list if it became public
+            internal readonly List<Button> Buttons = new List<Button>();  // TODO yield Buttons.List
             // TODO Buttons by number
             //public readonly Dictionary<ushort, Button> ButtonsByNumber
             //public Button GetButton(int buttonNo)
@@ -158,62 +158,56 @@ namespace XInput.Wrapper
 
 
             // TODO For binary state controls, such as digital buttons, the corresponding bit reflects whether or not the control is supported by the device. For proportional controls, such as thumbsticks, the value indicates the resolution for that control. Some number of the least significant bits may not be set, indicating that the control does not provide resolution to that level.
-            public class Capability
+            #region // Capability ////////////////////////////////////////////////////////////////////
+            Native.XINPUT_CAPABILITIES caps;
+
+            /// <summary>
+            /// Update capabilities. Done automatically when controller is connected.
+            /// </summary>
+            /// <returns>TRUE - if updated successfully</returns>
+            private bool UpdateCapabilities()
             {
-                uint uindex;
-                Native.XINPUT_CAPABILITIES caps;
+                return
+                    Native.XInputGetCapabilities(
+                        Index,
+                        0x00000001, // GAMEPAD_FLAG always
+                        ref caps) == 0;
+            }
 
-                internal Capability(uint userIndex)
-                {
-                    uindex = userIndex;
-                }
+            public SubType PadType { get { return (SubType)caps.SubType; } }
+            public bool IsWireless { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.Wireless); } }
+            public bool IsForceFeedback { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.ForceFeedback); } }
+            public bool IsVoiceSupport { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.VoiceSupport); } }
+            public bool IsNoNavigation { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.NoNavigation); } }
+            public bool IsPluginModules { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.PMD_Supported); } }
 
-                /// <summary>
-                /// Update capabilities. Done automatically when controller is connected.
-                /// </summary>
-                /// <returns>TRUE - if updated successfully</returns>
-                public bool Update()
-                {
-                    return
-                        Native.XInputGetCapabilities(
-                            uindex,
-                            0x00000001, // always GAMEPAD_FLAG,
-                            ref caps) == 0;
-                }
-                public SubType PadType { get { return (SubType)caps.SubType; } }
-                public bool IsWireless { get { return ((Flags)caps.Flags).HasFlag(Flags.Wireless); } }
-                public bool IsForceFeedback { get { return ((Flags)caps.Flags).HasFlag(Flags.ForceFeedback); } }
-                public bool IsVoiceSupport { get { return ((Flags)caps.Flags).HasFlag(Flags.VoiceSupport); } }
-                public bool IsNoNavigation { get { return ((Flags)caps.Flags).HasFlag(Flags.NoNavigation); } }
-                public bool IsPluginModules { get { return ((Flags)caps.Flags).HasFlag(Flags.PMD_Supported); } }
+            [Flags]
+            public enum Capabilities : ushort
+            {
+                VoiceSupport = 0x0004,
 
-                [Flags]
-                public enum Flags : ushort
-                {
-                    VoiceSupport = 0x0004,
+                //Windows 8 or higher only
+                ForceFeedback = 0x0001,   // Device supports force feedback functionality.
+                Wireless = 0x0002,
+                PMD_Supported = 0x0008,   // Device supports plug-in modules.
+                NoNavigation = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
+            };
 
-                    //Windows 8 or higher only
-                    ForceFeedback = 0x0001,   // Device supports force feedback functionality.
-                    Wireless = 0x0002,
-                    PMD_Supported = 0x0008,   // Device supports plug-in modules.
-                    NoNavigation = 0x0010,   // Device lacks menu navigation buttons (START, BACK, DPAD).
-                };
-
-                public enum SubType : byte
-                {
-                    Unknown = 0x00,
-                    Gamepad = 0x01,
-                    Wheel = 0x02,
-                    ArcadeStick = 0x03,
-                    FlightStick = 0x04,
-                    DancePad = 0x05,
-                    Guitar = 0x06,
-                    GuitarAlternate = 0x07,
-                    DrumKit = 0x08,
-                    GuitarBass = 0x0B,
-                    ArcadePad = 0x13
-                };
-            } // class Capability
+            public enum SubType : byte
+            {
+                Unknown = 0x00,
+                Gamepad = 0x01,
+                Wheel = 0x02,
+                ArcadeStick = 0x03,
+                FlightStick = 0x04,
+                DancePad = 0x05,
+                Guitar = 0x06,
+                GuitarAlternate = 0x07,
+                DrumKit = 0x08,
+                GuitarBass = 0x0B,
+                ArcadePad = 0x13
+            };
+            #endregion
         } // class Gamepad
     } // class X
 }
