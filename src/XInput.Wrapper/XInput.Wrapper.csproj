@@ -35,6 +35,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Battery.cs" />
+    <Compile Include="Axis.cs" />
+    <Compile Include="Button.cs" />
+    <Compile Include="Native.cs" />
+    <Compile Include="Gamepad.cs" />
     <Compile Include="X.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
