@@ -4,7 +4,7 @@
 - No external libraries, except XInput1_4.DLL but it ships today as a system component in Windows 8/8.1/10. It is available "inbox" and does not require redistribution with an application.
 - To implement this class into your own project, just add the "X.cs" class file and start using it without any restriction. Anyway you can download [latest release](https://github.com/nikvoronin/xinput.wrapper/releases/latest) and add a reference to XInput.Wrapper.dll.
 
-> There is an unstable `develop` or splitted `part` branches are selected by default. If you want to use this wrapper in production see stable `master` branch or download from `release` section or use NuGet package [AdsRemote](https://www.nuget.org/packages/XInput.Wrapper/).
+> There are an unstable `develop` or splitted `part` branches are selected by default. If you want to use this wrapper in production see stable `master` branch or download from `release` section or use NuGet package [XInput.Wrapper](https://www.nuget.org/packages/XInput.Wrapper/).
 
 # First steps
 
