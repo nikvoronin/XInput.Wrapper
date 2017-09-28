@@ -10,10 +10,17 @@
 
 - **Native** - DONE / untested
 - **Battery** - DONE / untested
-- **Button** - partial / untested
+- **Button** - partial ready / untested
 	- is this button **Supported** field
 	- readme part about using of events
 - **Axis** - in develope
+	- Update
+- **Gamepad** - in design
+	- Force Feedback
+	- Battery update period
+	- Get buttons by number
+	- yield Buttons.List
+	- supported buttons only
 - **X** - in design
 	
 # First steps
