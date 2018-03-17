@@ -49,7 +49,7 @@ X.Gamepad gamepad = null;
 ```
 
 
-Test of availability of XInput 1.4 (xinput1_4.dll). Should not call often! This method not cached.
+Test of availability of XInput 1.4 (xinput1_4.dll). This one should not call often! It is not cached.
 
 ```c#
 if (X.IsAvailable)

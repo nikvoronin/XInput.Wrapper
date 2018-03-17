@@ -25,7 +25,7 @@ namespace XInput.Wrapper
 
         /// <summary>
         /// Tests availability of the XInput_1.4 subsystem. 
-        /// Should not call often! This one not cached.
+        /// This one should not call often! It is not cached.
         /// </summary>
         public static bool IsAvailable
         {

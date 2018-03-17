@@ -29,11 +29,11 @@ namespace XInput.Wrapper
                 /// </summary>
                 /// <param name="state">Gamepad global state</param>
                 /// <returns>TRUE - button state was changed</returns>
-                internal Went Update(ref Native.XINPUT_STATE state)
+                internal Action Update(ref Native.XINPUT_STATE state)
                 {
                     bool hasFlag = ((ButtonFlags)state.Gamepad.wButtons).HasFlag(Mask);
                     bool stateChanged = hasFlag != Pressed;
-                    Went lastAct = Went.None;
+                    Action lastAct = Action.None;
 
                     if (stateChanged)
                     {
@@ -41,14 +41,14 @@ namespace XInput.Wrapper
                         if ((KeyDown != null) && hasFlag && !Pressed)
                         {
                             OnKeyDown();
-                            lastAct = Went.Down;
+                            lastAct = Action.Down;
                         }
                         else
                         {
                             if ((KeyUp != null) && Pressed && !hasFlag)
                             {
                                 OnKeyUp();
-                                lastAct = Went.Down;
+                                lastAct = Action.Down;
                             }
                         }
 
@@ -57,7 +57,7 @@ namespace XInput.Wrapper
 
                     if (Pressed &&
                         SendKeyDownEveryTick &&
-                        lastAct != Went.Down &&
+                        lastAct != Action.Down &&
                         KeyDown != null)
                     {
                         OnKeyDown();
@@ -117,7 +117,7 @@ namespace XInput.Wrapper
                     { ButtonFlags.Y, 4 }
                 };
 
-                internal enum Went { None, Down, Up }
+                internal enum Action { None, Down, Up }
             } // class Button
 
             [Flags]

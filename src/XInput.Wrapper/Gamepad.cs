@@ -88,16 +88,16 @@ namespace XInput.Wrapper
 
                     foreach (Button b in Buttons)
                     {
-                        Button.Went wh = b.Update(ref state);
+                        Button.Action act = b.Update(ref state);
 
-                        if (wh == Button.Went.Down ||
+                        if (act == Button.Action.Down ||
                             (SendKeyDownEveryTick && b.Pressed))
                         {
                             downButtons |= b.Mask;
                         }
                         else
                         {
-                            if (wh == Button.Went.Up)
+                            if (act == Button.Action.Up)
                                 upButtons |= b.Mask;
                         } // else
                     } // foreach
