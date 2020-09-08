@@ -14,12 +14,10 @@ namespace XInput.Wrapper
     public static partial class X
     {
         static Thread _updateThread;
-        static SynchronizationContext uiContext;
-        static CancellationTokenSource cts;
+        static SynchronizationContext _uiContext;
+        static CancellationTokenSource _cts;
 
         public static int UpdatesPerSecond = 30;
-
-        public static event EventHandler GamepadConnectionChanged;
 
         public static readonly IReadOnlyList<Gamepad> Gamepads;
         public static readonly Gamepad Gamepad1;
@@ -72,8 +70,8 @@ namespace XInput.Wrapper
         {
             EventHandler pceh = handler;
 
-            if (uiContext != null)
-                uiContext.Post((o) => pceh?.Invoke(sender, EventArgs.Empty), null);
+            if (_uiContext != null)
+                _uiContext.Post((o) => pceh?.Invoke(sender, EventArgs.Empty), null);
             else
                 pceh?.Invoke(sender, EventArgs.Empty);
         }
@@ -82,8 +80,8 @@ namespace XInput.Wrapper
         {
             EventHandler<KeyEventArgs> pceh = handler;
 
-            if (uiContext != null)
-                uiContext.Post((o) => pceh?.Invoke(sender, new KeyEventArgs(buttons)), null);
+            if (_uiContext != null)
+                _uiContext.Post((o) => pceh?.Invoke(sender, new KeyEventArgs(buttons)), null);
             else
                 pceh?.Invoke(sender, new KeyEventArgs(buttons));
         }
