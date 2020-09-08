@@ -4,61 +4,56 @@ namespace XInput.Wrapper
 {
     public static partial class X
     {
+        private const string XINPUT1_4_DLL = "xinput1_4.dll";
+
         public static class Native
         {
-            [DllImport("xinput1_4.dll")]
-            public static extern uint XInputGetState
-            (
+            [DllImport(XINPUT1_4_DLL)]
+            public static extern uint XInputGetState (
                 uint dwUserIndex,
-                ref XINPUT_STATE pState
-            );
+                ref XINPUT_STATE pState 
+                );
 
-            [DllImport("xinput1_4.dll")]
-            public static extern uint XInputSetState
-            (
+            [DllImport(XINPUT1_4_DLL)]
+            public static extern uint XInputSetState (
                 uint dwUserIndex,
                 ref XINPUT_VIBRATION pVibration
-            );
+                );
 
-            [DllImport("xinput1_4.dll")]
-            public static extern uint XInputGetCapabilities
-            (
+            [DllImport(XINPUT1_4_DLL)]
+            public static extern uint XInputGetCapabilities (
                 uint dwUserIndex,
                 uint dwFlags,
                 ref XINPUT_CAPABILITIES pCapabilities
-            );
+                );
 
-            [DllImport("xinput1_4.dll")]
-            public static extern uint XInputGetBatteryInformation
-            (
+            [DllImport(XINPUT1_4_DLL)]
+            public static extern uint XInputGetBatteryInformation (
                 uint dwUserIndex,
                 byte devType,
                 ref XINPUT_BATTERY_INFORMATION pBatteryInformation
-            );
+                );
 
-            [DllImport("xinput1_4.dll")]
-            public static extern uint XInputGetKeystroke
-            (
+            [DllImport(XINPUT1_4_DLL)]
+            public static extern uint XInputGetKeystroke (
                 uint dwUserIndex,
                 uint dwReserved,
                 ref XINPUT_KEYSTROKE pKeystroke
-            );
+                );
 
-            [DllImport("xinput1_4.dll")]
-            public static extern void XInputEnable
-            (
+            [DllImport(XINPUT1_4_DLL)]
+            public static extern void XInputEnable (
                 bool enable
-            );
+                );
 
             [DllImport("xinput1_4.dll)")]
-            public static extern uint XInputGetAudioDeviceIds
-            (
+            public static extern uint XInputGetAudioDeviceIds (
                 uint dwUserIndex,
                 [MarshalAs(UnmanagedType.LPWStr)]out string pRenderDeviceId,
                 ref uint pRenderCount,
                 [MarshalAs(UnmanagedType.LPWStr)]out string pCaptureDeviceId,
                 ref uint pCaptureCount
-            );
+                );
 
             [StructLayout(LayoutKind.Explicit)]
             public struct XINPUT_STATE
@@ -170,6 +165,7 @@ namespace XInput.Wrapper
                 public byte HidCode;
             }
 
+            public const uint ERROR_DEVICE_NOT_CONNECTED = 0x048F; // Winerror.h
         } // class Native
     } // class X
 }

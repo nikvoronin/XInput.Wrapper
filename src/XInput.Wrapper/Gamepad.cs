@@ -7,15 +7,20 @@ namespace XInput.Wrapper
     {
         public sealed partial class Gamepad
         {
-            public readonly uint Index; // User or controller index, zero based 0..3
+            public readonly uint Index; // User index or controller index, zero based in a range of [0..3]
+            public uint UserId => Index;
+            /// <summary>
+            /// Each controller displays which ID it is using by lighting up a quadrant on the "ring of light" in the center of the controller. A dwUserIndex value of 0 corresponds to the top-left quadrant; the numbering proceeds around the ring in clockwise order.
+            /// </summary>
+            public Quadrant UserQuadrant => (Quadrant)Index;
 
             public readonly Battery GamepadBattery;
             public readonly Battery HeadsetBattery;
 
-            Native.XINPUT_STATE state = new Native.XINPUT_STATE();
+            Native.XINPUT_STATE _internalState = new Native.XINPUT_STATE();
 
-            uint packetNumber = 0;
-            public uint PacketNumber { get { return state.dwPacketNumber; } }
+            //uint packetNumber = 0;
+            public uint PacketNumber { get { return _internalState.dwPacketNumber; } }
             public bool SendKeyDownEveryTick { get; set; }
 
             public Button A;
@@ -31,9 +36,12 @@ namespace XInput.Wrapper
 
             internal Gamepad(uint index)
             {
+                if (index < 0 || index > 3)
+                    throw new ArgumentOutOfRangeException("index", index, "The XInput API supports up to four controllers. The index must be in range of [0..3]");
+
                 Index = index;
-                GamepadBattery = new Battery(index, Battery.At.Gamepad);
-                HeadsetBattery = new Battery(index, Battery.At.Headset);
+                GamepadBattery = new Battery(Index, Battery.At.Gamepad);
+                HeadsetBattery = new Battery(Index, Battery.At.Headset);
 
                 // UNDONE other buttons
                 A = new Button(ButtonFlags.A);
@@ -41,9 +49,24 @@ namespace XInput.Wrapper
                 Buttons.Add(A);
             }
 
-            bool isConnected;
-            public bool IsConnected { get { return isConnected; } }
+            public bool Available => Connected;
+            public bool Connected { get; internal set; }
             public static bool Enable { set { Native.XInputEnable(value); } }
+
+            public bool UpdateConnectionState()
+            {
+                bool isChanged = false;
+                uint result = Native.XInputGetState(Index, ref _internalState);
+
+                if (Connected != (result == 0)) {
+                    isChanged = true;
+
+                    Connected = (result == 0);
+                    OnConnectionStateChanged();
+                }
+
+                return isChanged;
+            }
 
             /// <summary>
             /// Update gamepad data
@@ -51,27 +74,15 @@ namespace XInput.Wrapper
             /// <returns>TRUE - if state has been changed (button pressed, gamepad dis|connected, etc)</returns>
             public bool Update()
             {
-                bool isChanged = false;
-
                 //lastButtonsState = state.Current.Buttons;
-                uint lastPacketNumber = state.dwPacketNumber;
-                uint result = Native.XInputGetState(Index, ref state);
-
-                packetNumber = state.dwPacketNumber;
-
-                if (isConnected != (result == 0))
-                {
-                    isChanged = true;
-                    isConnected = (result == 0);
-                    if (ConnectionChanged != null)
-                        OnConnectionChanged();
-                }
+                uint prevPacketNumber = _internalState.dwPacketNumber;
+                bool isChanged = UpdateConnectionState();
 
                 // UNDONE do not update often. Should update only for wireless. ?shall I add an update interval
                 //if (isConnected)
                 //    UpdateBattery();
 
-                if (lastPacketNumber != packetNumber)
+                if (prevPacketNumber != _internalState.dwPacketNumber)
                 {
                     isChanged = true;
                     if (StateChanged != null)
@@ -79,16 +90,16 @@ namespace XInput.Wrapper
                 }
 
                 // UNDONE  make list of axises  and update it
-                if (isConnected)
+                if (Connected)
                 {
-                    ButtonsState = (ButtonFlags)state.Gamepad.wButtons;
+                    ButtonsState = (ButtonFlags)_internalState.Gamepad.wButtons;
 
                     ButtonFlags downButtons = ButtonFlags.None;
                     ButtonFlags upButtons = ButtonFlags.None;
 
                     foreach (Button b in Buttons)
                     {
-                        Button.Action act = b.Update(ref state);
+                        Button.Action act = b.Update(ref _internalState);
 
                         if (act == Button.Action.Down ||
                             (SendKeyDownEveryTick && b.Pressed))
@@ -129,7 +140,7 @@ namespace XInput.Wrapper
 
             #region // Events ////////////////////////////////////////////////////////////////////
 
-            public event EventHandler ConnectionChanged;
+            public event EventHandler ConnectionStateChanged;
             public event EventHandler StateChanged;
             public event EventHandler<KeyEventArgs> KeyDown;
             public event EventHandler<KeyEventArgs> KeyUp;
@@ -139,9 +150,9 @@ namespace XInput.Wrapper
                 OnEvent(this, StateChanged);
             }
 
-            public void OnConnectionChanged()
+            public void OnConnectionStateChanged()
             {
-                OnEvent(this, ConnectionChanged);
+                OnEvent(this, ConnectionStateChanged);
             }
 
             public void OnKeyDown(ButtonFlags buttons)
@@ -167,13 +178,12 @@ namespace XInput.Wrapper
             /// <returns>TRUE - if updated successfully</returns>
             private bool UpdateCapabilities()
             {
-                return
-                    Native.XInputGetCapabilities(
-                        Index,
-                        0x00000001, // GAMEPAD_FLAG always
-                        ref caps) == 0;
+                return Native.XInputGetCapabilities( Index,
+                    0x00000001, // GAMEPAD_FLAG always
+                    ref caps) == 0;
             }
 
+            // TODO remove Is_ prefix
             public SubType PadType { get { return (SubType)caps.SubType; } }
             public bool IsWireless { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.Wireless); } }
             public bool IsForceFeedback { get { return ((Capabilities)caps.Flags).HasFlag(Capabilities.ForceFeedback); } }
@@ -208,6 +218,8 @@ namespace XInput.Wrapper
                 ArcadePad = 0x13
             };
             #endregion
+
+            public enum Quadrant { TopLeft = 0, TopRight = 1, BottomRight = 2, BottomLeft = 3 }
         } // class Gamepad
     } // class X
 }

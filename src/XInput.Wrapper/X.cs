@@ -1,52 +1,72 @@
 ﻿// XInput.Wrapper by Nikolai Voronin
 // http://github.com/nikvoronin/xinput.wrapper
-// Version 0.4 (July 15, 2017)
+// Version 0.5 (Sep 8, 2020)
 // Under the MIT License (MIT)
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using XInput.Wrapper;
 
 namespace XInput.Wrapper
 {
     public static partial class X
     {
-        static Thread updateThread;
+        static Thread _updateThread;
         static SynchronizationContext uiContext;
         static CancellationTokenSource cts;
 
         public static int UpdatesPerSecond = 30;
 
-        public static readonly Gamepad Gamepad1 = new Gamepad(0);
-        public static readonly Gamepad Gamepad2 = new Gamepad(1);
-        public static readonly Gamepad Gamepad3 = new Gamepad(2);
-        public static readonly Gamepad Gamepad4 = new Gamepad(3);
-        static X() { }
+        public static readonly IReadOnlyList<Gamepad> Gamepads;
+        public static readonly Gamepad Gamepad1;
+        public static readonly Gamepad Gamepad2;
+        public static readonly Gamepad Gamepad3;
+        public static readonly Gamepad Gamepad4;
+        static X() {
+            Gamepad1 = new Gamepad(0);
+            Gamepad2 = new Gamepad(1);
+            Gamepad3 = new Gamepad(2);
+            Gamepad4 = new Gamepad(3);
+
+            Gamepads = new List<Gamepad>() { Gamepad1, Gamepad2, Gamepad3, Gamepad4 };
+        }
+
+        public static IEnumerable<Gamepad> AvailableGamepads {
+            get {
+                bool pollingInProgress = _updateThread?.IsAlive ?? false;
+
+                var gpads = pollingInProgress
+                    ? Gamepads.Where(gp => gp.Available)
+                    : Gamepads.Where(gp => {
+                        gp.UpdateConnectionState();
+                        return gp.Available;
+                    });
+
+                return gpads;
+            }
+        }
 
         /// <summary>
         /// Tests availability of the XInput_1.4 subsystem. 
         /// This one should not call often! It is not cached.
         /// </summary>
-        public static bool IsAvailable
+        public static bool Available
         {
-            get
-            {
-                bool isAvailable = false;
-
-                try
-                {
+            get { 
+                try {
                     Native.XINPUT_STATE state = new Native.XINPUT_STATE();
                     Native.XInputGetState(0, ref state);
-                    isAvailable = true;
                 }
-                catch
-                {
-                    isAvailable = false;
+                catch {
+                    return false;
                 }
 
-                return isAvailable;
+                return true;
             }
-        } // IsAvailable
+        }
 
         private static void OnEvent(object sender, EventHandler handler)
         {
@@ -68,7 +88,7 @@ namespace XInput.Wrapper
                 pceh?.Invoke(sender, new KeyEventArgs(buttons));
         }
 
-        public class KeyEventArgs : EventArgs
+        public class KeyEventArgs: EventArgs
         {
             public Gamepad.ButtonFlags Buttons = Gamepad.ButtonFlags.None;
             public KeyEventArgs() { }
