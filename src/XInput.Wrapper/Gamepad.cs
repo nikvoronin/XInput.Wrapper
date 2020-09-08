@@ -17,8 +17,6 @@ namespace XInput.Wrapper
             public readonly Battery GamepadBattery;
             public readonly Battery HeadsetBattery;
 
-            Native.XINPUT_STATE _internalState = new Native.XINPUT_STATE();
-
             //uint packetNumber = 0;
             public uint PacketNumber { get { return _internalState.dwPacketNumber; } }
             public bool SendKeyDownEveryTick { get; set; }
@@ -33,6 +31,8 @@ namespace XInput.Wrapper
             //    Button b;
             //    return b;
             //}
+
+            private Native.XINPUT_STATE _internalState = new Native.XINPUT_STATE();
 
             internal Gamepad(uint index)
             {

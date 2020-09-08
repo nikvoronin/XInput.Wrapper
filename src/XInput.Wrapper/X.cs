@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using XInput.Wrapper;
 
 namespace XInput.Wrapper
 {
@@ -19,6 +18,8 @@ namespace XInput.Wrapper
         static CancellationTokenSource cts;
 
         public static int UpdatesPerSecond = 30;
+
+        public static event EventHandler GamepadConnectionChanged;
 
         public static readonly IReadOnlyList<Gamepad> Gamepads;
         public static readonly Gamepad Gamepad1;
@@ -51,7 +52,6 @@ namespace XInput.Wrapper
 
         /// <summary>
         /// Tests availability of the XInput_1.4 subsystem. 
-        /// This one should not call often! It is not cached.
         /// </summary>
         public static bool Available
         {
@@ -88,7 +88,7 @@ namespace XInput.Wrapper
                 pceh?.Invoke(sender, new KeyEventArgs(buttons));
         }
 
-        public class KeyEventArgs: EventArgs
+        public class KeyEventArgs : EventArgs
         {
             public Gamepad.ButtonFlags Buttons = Gamepad.ButtonFlags.None;
             public KeyEventArgs() { }

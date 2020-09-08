@@ -24,9 +24,18 @@ namespace GpTest.Con
             }
             Console.WriteLine();
 
-            X.Gamepad gamepad = X.AvailableGamepads.First();
+            X.Gamepad gpad = X.AvailableGamepads.First();
 
-            Console.WriteLine($"[+] Gamepad #{gamepad.Index} connected");
+            Console.WriteLine($"[+] Gamepad #{gpad.Index} connected");
+
+            do {
+                bool changed = gpad.Update();
+                if (changed) {
+                }
+
+                Thread.Sleep(100);
+            } while (gpad.Available);
+            Console.WriteLine();
 
             Console.WriteLine("\nPress [Enter] to exit...");
             Console.ReadLine();
