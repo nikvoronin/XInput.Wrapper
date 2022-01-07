@@ -46,7 +46,7 @@ namespace XInput.Wrapper
                 bool enable
                 );
 
-            [DllImport("xinput1_4.dll)")]
+            [DllImport( XINPUT1_4_DLL )]
             public static extern uint XInputGetAudioDeviceIds (
                 uint dwUserIndex,
                 [MarshalAs(UnmanagedType.LPWStr)]out string pRenderDeviceId,
@@ -166,6 +166,6 @@ namespace XInput.Wrapper
             }
 
             public const uint ERROR_DEVICE_NOT_CONNECTED = 0x048F; // Winerror.h
-        } // class Native
-    } // class X
+        }
+    }
 }
